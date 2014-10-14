@@ -325,6 +325,8 @@ void GLWidget::resizeGL(int width, int height)
 {
   if(m_painting)
     return;
+  if(isGLFullScreen())
+    return;
   m_painting = true;
 
   FABRIC_TRY("GLWidget::resizeGL",
@@ -345,13 +347,19 @@ void GLWidget::toggleGLFullScreen()
     setParent(m_prevParent);
     m_prevParent->layout()->addWidget(this);
 
+    FABRIC_TRY("GLWidget::toggleGLFullScreen",
+
+      m_viewport.setMember("width", constructUInt32RTVal(m_prevParent->width()));
+      m_viewport.setMember("height", constructUInt32RTVal(m_prevParent->height()));
+
+    );
+
     m_requiresInitialize = true;
     m_prevParent = NULL;
     m_fullScreenDialog->close();
     delete(m_fullScreenDialog);
     m_fullScreenDialog = NULL;
 
-    resizeGL(width(), height());
     updateGL();
   }
   else
@@ -366,8 +374,16 @@ void GLWidget::toggleGLFullScreen()
     m_fullScreenDialog->setModal(false);
     m_fullScreenDialog->setWindowFlags(Qt::SplashScreen);
     m_fullScreenDialog->resize(QApplication::desktop()->width(), QApplication::desktop()->height());
+
+    FABRIC_TRY("GLWidget::toggleGLFullScreen",
+
+      m_viewport.setMember("width", constructUInt32RTVal(QApplication::desktop()->width()));
+      m_viewport.setMember("height", constructUInt32RTVal(QApplication::desktop()->height()));
+
+    );
+
     m_fullScreenDialog->show();
-    resizeGL(QApplication::desktop()->width(), QApplication::desktop()->height());
+
     updateGL();
   }        
 }
