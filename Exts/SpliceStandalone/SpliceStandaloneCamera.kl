@@ -7,25 +7,50 @@ object SpliceStandaloneCamera {
   Float32 nearValue;
   Float32 farValue;
   Float32 fovY;
+
+  Vec3 velocity;
+  Float32 velocitySpeed;
+  Float32 velocityBlend;
+  Float32 velocityDrag;
 };
 
 function SpliceStandaloneCamera() {
   this.nearValue = 0.01;
   this.farValue = 1000.0;
   this.fovY = 50.0 * DEG_TO_RAD;
+  this.velocitySpeed = 1.5;
+  this.velocityBlend = 0.1;
+  this.velocityDrag = 0.97;
 
   this.resetPosition();
 }
 
-function Mat44 SpliceStandaloneCamera.getMatrix() {
+function Mat44 SpliceStandaloneCamera.getMatrix!() {
 
   Xfo xfo;
-  xfo.tr = this.position;
-  xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));
   xfo.sc = Vec3(1, 1, 1);
+  xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));
+
+  Vec3 velocity;
+  velocity += this.velocity.x * xfo.ori.getXaxis();
+  velocity += this.velocity.y * xfo.ori.getYaxis();
+  velocity += this.velocity.z * xfo.ori.getZaxis();
+  this.position += velocity;
+  this.target += velocity;
+
+  this.velocity *= this.velocityDrag;
+  if(this.velocity.lengthSquared() < 0.01)
+    this.velocity = Vec3(0.0, 0.0, 0.0);
+
+  xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));
+  xfo.tr = this.position;
 
   return xfo.toMat44();
+}
 
+function SpliceStandaloneCamera.walk!(Float32 x, Float32 y, Float32 z) {
+  Vec3 newVelocity(x, y, z);
+  this.velocity = this.velocity.linearInterpolate(newVelocity * this.velocitySpeed, this.velocityBlend);
 }
 
 function SpliceStandaloneCamera.orbit!(Vec2 move) {

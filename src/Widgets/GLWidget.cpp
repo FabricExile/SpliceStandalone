@@ -278,32 +278,6 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 	updateGL();
 }
 
-void GLWidget::keyPressEvent(QKeyEvent *event)
-{
-// 	Qt::KeyboardModifiers key_modifiers = qApp->keyboardModifiers();
-
-// 	// Move camera smoothly to center view on currently picked object, on pressing F (as in Maya)
-// 	if (m_interactionState == GLWidget::USER_INTERACTION)
-// 	{
-// 		// Trigger camera focus
-// 		if ( event->key()==Qt::Key_F )
-// 		{
-// //			m_focusing = true;
-// //			m_focusStartCam = m_camera->copy();
-// //			m_focusTimer.restart();
-// 		}
-
-// 		// Save Current View
-// 		if ( event->key()==Qt::Key_S )
-// 		{
-// 			QImage capture = grabFrameBuffer();
-// 			capture.save("/tmp/optixGrab.png");
-// 			std::cout << "image Saved at " << "/tmp/optixGrab.png" << std::endl;
-// 		}
-// 	}
-
-}
-
 void GLWidget::initializeGL()
 {
   if(!m_redrawEnabled)
@@ -386,4 +360,17 @@ void GLWidget::toggleGLFullScreen()
 
     updateGL();
   }        
+}
+
+void GLWidget::walk(float x, float y, float z) {
+  FABRIC_TRY("GLWidget::walk",
+
+    std::vector<FabricCore::RTVal> args(3);
+    args[0] = constructFloat32RTVal(x);
+    args[1] = constructFloat32RTVal(y);
+    args[2] = constructFloat32RTVal(z);
+    m_camera.callMethod("", "walk", args.size(), &args[0]);
+
+  );
+  updateGL();
 }

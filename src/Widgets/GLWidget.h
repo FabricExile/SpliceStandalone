@@ -34,9 +34,11 @@ namespace FabricSplice
     void setTime(float time);
     void setWireFrame(bool wireFrame);
     void toggleGrid();
-    void resetCameraPosition();
     void toggleGLFullScreen();
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
+    
+    void resetCameraPosition();
+    void walk(float x, float y, float z);
 
     /// returns the real frames per second of this TimeSlider
     double fps() const { return m_fps; }
@@ -56,7 +58,6 @@ namespace FabricSplice
   	void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
   	void wheelEvent(QWheelEvent *event);
-  	void keyPressEvent(QKeyEvent *event);
 
     FabricCore::RTVal m_camera;
     FabricCore::RTVal m_viewport;

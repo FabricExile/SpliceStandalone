@@ -140,6 +140,8 @@ function Boolean SpliceStandaloneViewport.paintGL!() {
     InlineDrawing drawing = OGLInlineDrawing_GetInstance();
     drawing.draw(this.drawContext);
 
+    this.drawContext.viewport.camera.mat44 = this.camera.getMatrix();
+
   }
 
   return this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);

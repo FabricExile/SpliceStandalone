@@ -80,6 +80,36 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
         m_window->activateManipulator();
         return true;
       }
+      case Qt::Key_W:
+      {
+        m_window->m_glWidget->walk(0, 0, -1);
+        return true;
+      }
+      case Qt::Key_S:
+      {
+        m_window->m_glWidget->walk(0, 0, 1);
+        return true;
+      }
+      case Qt::Key_A:
+      {
+        m_window->m_glWidget->walk(-1, 0, 0);
+        return true;
+      }
+      case Qt::Key_D:
+      {
+        m_window->m_glWidget->walk(1, 0, 0);
+        return true;
+      }
+      case Qt::Key_PageUp:
+      {
+        m_window->m_glWidget->walk(0, 1, 0);
+        return true;
+      }
+      case Qt::Key_PageDown:
+      {
+        m_window->m_glWidget->walk(0, -1, 0);
+        return true;
+      }
       case Qt::Key_F11:
       {
         m_window->m_glWidget->toggleGLFullScreen();
