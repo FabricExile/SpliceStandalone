@@ -380,3 +380,15 @@ void GLWidget::walk(float x, float y, float z) {
   );
   updateGL();
 }
+
+void GLWidget::turn(float x, float y) {
+  FABRIC_TRY("GLWidget::turn",
+
+    std::vector<FabricCore::RTVal> args(2);
+    args[0] = constructFloat32RTVal(x);
+    args[1] = constructFloat32RTVal(y);
+    m_camera.callMethod("", "turn", args.size(), &args[0]);
+
+  );
+  updateGL();
+}

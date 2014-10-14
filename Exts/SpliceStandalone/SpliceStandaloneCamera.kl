@@ -8,19 +8,26 @@ object SpliceStandaloneCamera {
   Float32 farValue;
   Float32 fovY;
 
-  Vec3 velocity;
-  Float32 velocitySpeed;
-  Float32 velocityBlend;
-  Float32 velocityDrag;
+  Vec3 walkVelocity;
+  Float32 walkVelocitySpeed;
+  Float32 walkVelocityBlend;
+  Float32 walkVelocityDrag;
+  Vec2 turnVelocity;
+  Float32 turnVelocitySpeed;
+  Float32 turnVelocityBlend;
+  Float32 turnVelocityDrag;
 };
 
 function SpliceStandaloneCamera() {
   this.nearValue = 0.01;
   this.farValue = 1000.0;
   this.fovY = 50.0 * DEG_TO_RAD;
-  this.velocitySpeed = 1.5;
-  this.velocityBlend = 0.025;
-  this.velocityDrag = 0.995;
+  this.walkVelocitySpeed = 1.5;
+  this.walkVelocityBlend = 0.025;
+  this.walkVelocityDrag = 0.995;
+  this.turnVelocitySpeed = 1.5;
+  this.turnVelocityBlend = 0.1;
+  this.turnVelocityDrag = 0.95;
 
   this.resetPosition();
 }
@@ -31,16 +38,24 @@ function Mat44 SpliceStandaloneCamera.getMatrix!() {
   xfo.sc = Vec3(1, 1, 1);
   xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));
 
-  Vec3 velocity;
-  velocity += this.velocity.x * xfo.ori.getXaxis();
-  velocity += this.velocity.y * xfo.ori.getYaxis();
-  velocity += this.velocity.z * xfo.ori.getZaxis();
-  this.position += velocity;
-  this.target += velocity;
+  Vec3 walkVelocity;
+  walkVelocity += this.walkVelocity.x * xfo.ori.getXaxis();
+  walkVelocity += this.walkVelocity.y * xfo.ori.getYaxis();
+  walkVelocity += this.walkVelocity.z * xfo.ori.getZaxis();
+  this.position += walkVelocity;
+  this.target += walkVelocity;
 
-  this.velocity *= this.velocityDrag;
-  if(this.velocity.lengthSquared() < 0.00001)
-    this.velocity = Vec3(0.0, 0.0, 0.0);
+  Quat turn;
+  turn.setFromAxisAndAngle(Vec3(0, 1, 0), this.turnVelocity.x);
+  this.target = this.position + turn.rotateVector(this.target - this.position);
+
+  this.walkVelocity *= this.walkVelocityDrag;
+  if(this.walkVelocity.lengthSquared() < 0.00001)
+    this.walkVelocity = Vec3(0.0, 0.0, 0.0);
+
+  this.turnVelocity *= this.turnVelocityDrag;
+  if(this.turnVelocity.lengthSquared() < 0.00001)
+    this.turnVelocity = Vec2(0.0, 0.0);
 
   xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));
   xfo.tr = this.position;
@@ -50,7 +65,12 @@ function Mat44 SpliceStandaloneCamera.getMatrix!() {
 
 function SpliceStandaloneCamera.walk!(Float32 x, Float32 y, Float32 z) {
   Vec3 newVelocity(x, y, z);
-  this.velocity = this.velocity.linearInterpolate(newVelocity * this.velocitySpeed, this.velocityBlend);
+  this.walkVelocity = this.walkVelocity.linearInterpolate(newVelocity * this.walkVelocitySpeed, this.walkVelocityBlend);
+}
+
+function SpliceStandaloneCamera.turn!(Float32 x, Float32 y) {
+  Vec2 newVelocity(x, y);
+  this.turnVelocity = this.turnVelocity.linearInterpolate(newVelocity * this.turnVelocitySpeed, this.turnVelocityBlend);
 }
 
 function SpliceStandaloneCamera.orbit!(Vec2 move) {

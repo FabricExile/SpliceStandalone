@@ -92,12 +92,18 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
       }
       case Qt::Key_A:
       {
-        m_window->m_glWidget->walk(-1, 0, 0);
+        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
+          m_window->m_glWidget->turn(5 * 3.14 / 180.0, 0);
+        else
+          m_window->m_glWidget->walk(-1, 0, 0);
         return true;
       }
       case Qt::Key_D:
       {
-        m_window->m_glWidget->walk(1, 0, 0);
+        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
+          m_window->m_glWidget->turn(-5 * 3.14 / 180.0, 0);
+        else
+          m_window->m_glWidget->walk(1, 0, 0);
         return true;
       }
       case Qt::Key_PageUp:
