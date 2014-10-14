@@ -46,6 +46,10 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
   m_painting = false;
   m_prevParent = NULL;
   m_fullScreenDialog = NULL;
+
+  m_requiresInitialize = true;
+  m_requiresResize = true;
+  m_resizeEnabled = true;
 }
 
 GLWidget::~GLWidget()
@@ -86,6 +90,7 @@ void GLWidget::resetRTVals()
 
   m_requiresInitialize = true;
   m_requiresResize = true;
+  m_resizeEnabled = true;
 }
 
 FabricCore::RTVal GLWidget::getInlineViewport()
@@ -127,7 +132,12 @@ void GLWidget::paintGL()
 	// perform drawing
   if(m_requiresInitialize)
   {
-    initializeGL();
+    FABRIC_TRY("GLWidget::initializeGL",
+
+      m_viewport.callMethod("", "initializeGL", 0, 0);
+
+    );
+    m_requiresInitialize = false;
     m_requiresResize = true;
   }
 
@@ -139,6 +149,7 @@ void GLWidget::paintGL()
 
     );
     m_requiresResize = false;
+    m_resizeEnabled = true;
   }
 
   m_painting = true;
@@ -280,23 +291,13 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 
 void GLWidget::initializeGL()
 {
-  if(!m_redrawEnabled)
-    return;
-  if(m_painting)
-    return;
-  m_painting = true;
-
-  FABRIC_TRY("GLWidget::initializeGL",
-
-    m_viewport.callMethod("", "initializeGL", 0, 0);
-
-  );
-  m_requiresInitialize = false;
-  m_painting = false;
+  m_requiresInitialize = true;
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
+  if(!m_resizeEnabled)
+    return;
   if(m_painting)
     return;
   if(isGLFullScreen())
@@ -311,15 +312,22 @@ void GLWidget::resizeGL(int width, int height)
   );
 
   m_painting = false;
-  m_requiresResize = true;
 }
 
 void GLWidget::toggleGLFullScreen()
 {
   if(m_fullScreenDialog)
   {
+    m_resizeEnabled = false;
+
     setParent(m_prevParent);
     m_prevParent->layout()->addWidget(this);
+    m_fullScreenDialog->close();
+
+    delete(m_fullScreenDialog);
+    m_fullScreenDialog = NULL;
+
+    m_requiresInitialize = true;
 
     FABRIC_TRY("GLWidget::toggleGLFullScreen",
 
@@ -328,18 +336,15 @@ void GLWidget::toggleGLFullScreen()
 
     );
 
-    m_requiresInitialize = true;
     m_prevParent = NULL;
-    m_fullScreenDialog->close();
-    delete(m_fullScreenDialog);
-    m_fullScreenDialog = NULL;
 
     updateGL();
   }
   else
   {
+    m_resizeEnabled = false;
+
     m_prevParent = parentWidget();
-    m_requiresInitialize = true;
     m_fullScreenDialog = new QDialog();
     m_fullScreenDialog->setLayout(new QVBoxLayout());
     m_fullScreenDialog->layout()->setContentsMargins(0, 0, 0, 0);
@@ -356,8 +361,8 @@ void GLWidget::toggleGLFullScreen()
 
     );
 
+    m_requiresInitialize = true;
     m_fullScreenDialog->show();
-
     updateGL();
   }        
 }

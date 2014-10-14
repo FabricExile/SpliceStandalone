@@ -19,8 +19,8 @@ function SpliceStandaloneCamera() {
   this.farValue = 1000.0;
   this.fovY = 50.0 * DEG_TO_RAD;
   this.velocitySpeed = 1.5;
-  this.velocityBlend = 0.1;
-  this.velocityDrag = 0.97;
+  this.velocityBlend = 0.025;
+  this.velocityDrag = 0.995;
 
   this.resetPosition();
 }
@@ -39,7 +39,7 @@ function Mat44 SpliceStandaloneCamera.getMatrix!() {
   this.target += velocity;
 
   this.velocity *= this.velocityDrag;
-  if(this.velocity.lengthSquared() < 0.01)
+  if(this.velocity.lengthSquared() < 0.00001)
     this.velocity = Vec3(0.0, 0.0, 0.0);
 
   xfo.ori.setFromDirectionAndUpvector(this.position - this.target, Vec3(0, 1, 0));

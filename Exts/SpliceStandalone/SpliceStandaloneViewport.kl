@@ -152,14 +152,10 @@ function SpliceStandaloneViewport.resizeGL!() {
   if(this.performCallback(SpliceStandaloneViewportPhase_Resize))
     return;
 
-  Scalar aspect = Scalar(this.width) / Scalar(this.height);
-
   glViewport(0, 0, this.width, this.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-
   glMatrixMode(GL_MODELVIEW);
-
   glLoadIdentity();
 }
 

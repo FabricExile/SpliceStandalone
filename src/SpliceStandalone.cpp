@@ -114,7 +114,6 @@ void SpliceStandalone::displayMessage(std::string message)
   if (m_mainWindow)
   {
     m_mainWindow->displayMessage(message+"\n");
-    processEvents();
   }
 }
 

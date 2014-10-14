@@ -65,6 +65,7 @@ namespace FabricSplice
 
     bool m_requiresInitialize;
     bool m_requiresResize;
+    bool m_resizeEnabled;
 
     QTime m_fpsTimer;
     double m_fps;
