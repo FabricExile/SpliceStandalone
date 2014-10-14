@@ -7,6 +7,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QMainWindow>
 #include <QtGui/QImage>
+#include <QtGui/QDialog>
 #include <QtOpenGL/QGLWidget>
 #include <QtCore/QTime>
 
@@ -22,7 +23,7 @@ namespace FabricSplice
   public:
 
   	GLWidget(QGLFormat format, QWidget *parent = NULL);
-  	virtual ~GLWidget() {}
+  	virtual ~GLWidget();
 
   	FabricCore::RTVal getInlineViewport();
 
@@ -34,7 +35,8 @@ namespace FabricSplice
     void setWireFrame(bool wireFrame);
     void toggleGrid();
     void resetCameraPosition();
-    void toggleFullScreen();
+    void toggleGLFullScreen();
+    bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
 
     /// returns the real frames per second of this TimeSlider
     double fps() const { return m_fps; }
@@ -70,6 +72,7 @@ namespace FabricSplice
     bool m_painting;
 
     QWidget * m_prevParent;
+    QDialog * m_fullScreenDialog;
 
   };
 };

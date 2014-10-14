@@ -119,7 +119,7 @@ function SpliceStandaloneViewport.initializeGL!() {
   }
 }
 
-function SpliceStandaloneViewport.paintGL!() {
+function Boolean SpliceStandaloneViewport.paintGL!() {
 
   // update the inline viewport
   this.drawContext.viewport.dimensions.x = this.width;
@@ -142,7 +142,7 @@ function SpliceStandaloneViewport.paintGL!() {
 
   }
 
-  this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);
+  return this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);
 }
 
 function SpliceStandaloneViewport.resizeGL!() {

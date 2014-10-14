@@ -15,6 +15,8 @@
 
 #include <QtGui/qapplication.h>
 #include <QtGui/QDesktopWidget>
+#include <QtGui/QLayout>
+#include <QtGui/QVBoxLayout>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
@@ -29,6 +31,8 @@ using namespace FabricSplice;
 GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
 	QGLWidget(format, parent)
 {	
+  setAutoBufferSwap(false);
+
   m_fps = 0.0;
 
   for(int i=0;i<16;i++)
@@ -41,6 +45,13 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
   m_redrawEnabled = false;
   m_painting = false;
   m_prevParent = NULL;
+  m_fullScreenDialog = NULL;
+}
+
+GLWidget::~GLWidget()
+{
+  if(m_fullScreenDialog)
+    delete(m_fullScreenDialog);
 }
 
 void GLWidget::resetRTVals()
@@ -132,11 +143,16 @@ void GLWidget::paintGL()
 
   m_painting = true;
 
+  bool performedSwapBuffers = false;
+
   FABRIC_TRY("GLWidget::paintGL",
 
-    m_viewport.callMethod("", "paintGL", 0, 0);
+    performedSwapBuffers = m_viewport.callMethod("Boolean", "paintGL", 0, 0).getBoolean();
 
   );
+
+  if(!performedSwapBuffers)
+    swapBuffers();
 
   emit redrawn();
 
@@ -322,23 +338,35 @@ void GLWidget::resizeGL(int width, int height)
   m_requiresResize = true;
 }
 
-void GLWidget::toggleFullScreen()
+void GLWidget::toggleGLFullScreen()
 {
-  if(isFullScreen())
+  if(m_fullScreenDialog)
   {
     setParent(m_prevParent);
+    m_prevParent->layout()->addWidget(this);
+
     m_requiresInitialize = true;
-    showNormal();
-    resizeGL(m_prevParent->width(), m_prevParent->height());
-    updateGL();
     m_prevParent = NULL;
+    m_fullScreenDialog->close();
+    delete(m_fullScreenDialog);
+    m_fullScreenDialog = NULL;
+
+    resizeGL(width(), height());
+    updateGL();
   }
   else
   {
     m_prevParent = parentWidget();
     m_requiresInitialize = true;
-    setParent(NULL);
-    showFullScreen();
+    m_fullScreenDialog = new QDialog();
+    m_fullScreenDialog->setLayout(new QVBoxLayout());
+    m_fullScreenDialog->layout()->setContentsMargins(0, 0, 0, 0);
+    setParent(m_fullScreenDialog);
+    m_fullScreenDialog->layout()->addWidget(this);
+    m_fullScreenDialog->setModal(false);
+    m_fullScreenDialog->setWindowFlags(Qt::SplashScreen);
+    m_fullScreenDialog->resize(QApplication::desktop()->width(), QApplication::desktop()->height());
+    m_fullScreenDialog->show();
     resizeGL(QApplication::desktop()->width(), QApplication::desktop()->height());
     updateGL();
   }        

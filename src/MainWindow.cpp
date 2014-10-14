@@ -82,13 +82,13 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
       }
       case Qt::Key_F11:
       {
-        m_window->m_glWidget->toggleFullScreen();
+        m_window->m_glWidget->toggleGLFullScreen();
         return true;
       }
       case Qt::Key_Escape:
       {
-        if(m_window->m_glWidget->isFullScreen())
-          m_window->m_glWidget->toggleFullScreen();
+        if(m_window->m_glWidget->isGLFullScreen())
+          m_window->m_glWidget->toggleGLFullScreen();
         return true;
       }
     }
@@ -184,6 +184,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   glParentWidget->setLayout(new QVBoxLayout());
 	m_glWidget = new GLWidget(glFormat, glParentWidget);
   glParentWidget->layout()->addWidget(m_glWidget);
+  glParentWidget->layout()->setContentsMargins(0, 0, 0, 0);
 	m_glWidget->makeCurrent();
   m_glWidget->installEventFilter(m_eventFilter);
 	setCentralWidget(glParentWidget);
