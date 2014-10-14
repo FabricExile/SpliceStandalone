@@ -312,6 +312,7 @@ void GLWidget::resizeGL(int width, int height)
   );
 
   m_painting = false;
+  m_requiresResize = true;
 }
 
 void GLWidget::toggleGLFullScreen()
