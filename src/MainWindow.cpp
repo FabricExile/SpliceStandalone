@@ -227,7 +227,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
 
 	m_glWidget->show();
 
-  connect( m_glWidget, SIGNAL(redrawn()) , this, SLOT(glViewRedrawn()) );
+  connect( m_glWidget, SIGNAL(redrawn()) , this, SLOT(updateStatusBar()) );
 
 	m_glWidget->updateGL();
 
@@ -269,14 +269,20 @@ void MainWindow::timeChanged(int frame)
   m_glWidget->setTime(float(frame) / 24.0);
 }
 
-void MainWindow::glViewRedrawn()
+void MainWindow::updateStatusBar(bool force)
 {
-  if(m_statusBarTimer.elapsed() < 1000)
+  if(m_statusBarTimer.elapsed() < 1000 && !force)
     return;
   QString caption;
   caption.setNum(m_glWidget->fps(), 'f', 2);
-  m_statusBar->showMessage(caption+" FPS");
+  m_statusBar->showMessage(caption+" FPS "+m_statusBarCaption);
   m_statusBarTimer.start();
+}
+
+void MainWindow::setStatusBarText(QString caption)
+{
+  m_statusBarCaption = caption;
+  updateStatusBar(true);;  
 }
 
 void MainWindow::showAttributeEditor()

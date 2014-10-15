@@ -65,7 +65,12 @@ void appKLStatusFunc(const char * topic, unsigned int topicLength,  const char *
   stringMessage += message;
 
   if(gApplication)
+  {
+    std::string stringTopic = topic;
+    if(stringTopic == "[StatusBar]")
+      gApplication->setStatusBarText(message);
     gApplication->displayMessage(stringMessage);
+  }
 }
 
 SpliceStandalone * SpliceStandalone::getInstance()
@@ -116,6 +121,16 @@ void SpliceStandalone::displayMessage(std::string message)
     m_mainWindow->displayMessage(message+"\n");
   }
 }
+
+// dispatch a message to the status bar
+void SpliceStandalone::setStatusBarText(std::string caption)
+{
+  if (m_mainWindow)
+  {
+    m_mainWindow->setStatusBarText(caption.c_str());
+  }
+}
+
 
 SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & splicePath)
 {

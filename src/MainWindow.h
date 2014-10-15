@@ -65,7 +65,8 @@ namespace FabricSplice
     void attributeChanged( QSpliceGraphWrapper wrapper, std::string attributeName );
     void timeChanged(int frame);
     void setGlViewEnabled(bool enable);
-    void glViewRedrawn();
+    void updateStatusBar(bool force = false);
+    void setStatusBarText(QString caption);
 
     void showKLEditor();
     void showLogWindow();
@@ -95,6 +96,7 @@ namespace FabricSplice
     MainWindowKeyFilter * m_eventFilter;
 
     QStatusBar * m_statusBar;
+    QString m_statusBarCaption;
     QTime m_statusBarTimer;
   };
 };

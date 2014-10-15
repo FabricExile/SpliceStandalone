@@ -49,6 +49,9 @@ namespace FabricSplice {
     // dispatch a message to the log window 
     void displayMessage(std::string message);
 
+    // dispatch a message to the status bar
+    void setStatusBarText(std::string caption);
+
     // access to the application's path
     boost::filesystem::path getFabricPath() const { return m_fabricPath; }
 
