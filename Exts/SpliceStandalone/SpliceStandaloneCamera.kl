@@ -48,6 +48,8 @@ function Mat44 SpliceStandaloneCamera.getMatrix!() {
   Quat turn;
   turn.setFromAxisAndAngle(Vec3(0, 1, 0), this.turnVelocity.x);
   this.target = this.position + turn.rotateVector(this.target - this.position);
+  turn.setFromAxisAndAngle(Vec3(1, 0, 0), this.turnVelocity.y);
+  this.target = this.position + turn.rotateVector(this.target - this.position);
 
   this.walkVelocity *= this.walkVelocityDrag;
   if(this.walkVelocity.lengthSquared() < 0.00001)

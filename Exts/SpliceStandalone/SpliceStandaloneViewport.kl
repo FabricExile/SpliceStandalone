@@ -15,11 +15,24 @@ const Integer SpliceStandaloneViewport_Modifier_Shift = 2;
 const Integer SpliceStandaloneViewport_Modifier_Control = 4;
 
 alias Integer SpliceStandaloneViewportPhase;
+
+/// fired during setup of the GL window
 const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Initialize = 0;
+
+/// fired during resize of the GL window
 const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Resize = 1;
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_BeforePaint = 2;
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Paint = 3;
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_AfterPaint = 4;
+
+/// fired before the camera data is copied into the rendering setup
+const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Camera = 2;
+
+/// fired before painting is performed
+const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_BeforePaint = 3;
+
+/// fired during painting
+const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Paint = 4;
+
+/// fired once painting is completed
+const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_AfterPaint = 5;
 
 object SpliceStandaloneViewport;
 
@@ -120,6 +133,8 @@ function SpliceStandaloneViewport.initializeGL!() {
 }
 
 function Boolean SpliceStandaloneViewport.paintGL!() {
+
+  this.performCallback(SpliceStandaloneViewportPhase_Camera);
 
   // update the inline viewport
   this.drawContext.viewport.dimensions.x = this.width;
