@@ -25,8 +25,8 @@ function SpliceStandaloneCamera() {
   this.walkVelocitySpeed = 1.5;
   this.walkVelocityBlend = 0.025;
   this.walkVelocityDrag = 0.995;
-  this.turnVelocitySpeed = 1.5;
-  this.turnVelocityBlend = 0.1;
+  this.turnVelocitySpeed = 0.5;
+  this.turnVelocityBlend = 0.4;
   this.turnVelocityDrag = 0.95;
 
   this.resetPosition();
