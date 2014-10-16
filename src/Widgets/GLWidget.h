@@ -40,6 +40,7 @@ namespace FabricSplice
     void resetCameraPosition();
     void walk(float x, float y, float z);
     void turn(float x, float y);
+    void addFilePath(const std::string & filePath);
 
     /// returns the real frames per second of this TimeSlider
     double fps() const { return m_fps; }

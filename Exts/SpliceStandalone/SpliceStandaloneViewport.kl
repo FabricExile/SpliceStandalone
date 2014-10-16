@@ -50,6 +50,7 @@ object SpliceStandaloneViewport {
   Integer interactionState;
   DrawContext drawContext;
   InlineInstance gridInstance;
+  String filePaths[];
   /// \internal
   SpliceStandaloneViewportCallback callbacks[SpliceStandaloneViewportPhase];
 };
@@ -62,6 +63,10 @@ function SpliceStandaloneViewport() {
   this.interactionState = SpliceStandaloneViewport_Interaction_User;
 
   Singleton_set('Viewport', this);
+}
+
+function SpliceStandaloneViewport.addFilePath!(String filePath) {
+  this.filePaths.push(filePath);
 }
 
 function SpliceStandaloneViewport.registerCallback!(SpliceStandaloneViewportPhase phase, SpliceStandaloneViewportCallback callback) {

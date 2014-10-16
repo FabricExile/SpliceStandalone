@@ -167,6 +167,7 @@ SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & spliceP
   if(m_mainWindow)
   {
     m_mainWindow->setGlViewEnabled(true);
+    m_mainWindow->addFilePath(splicePath);
     m_mainWindow->redraw();
   }
   

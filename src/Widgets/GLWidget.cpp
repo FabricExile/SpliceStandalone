@@ -392,3 +392,12 @@ void GLWidget::turn(float x, float y) {
   );
   updateGL();
 }
+
+void GLWidget::addFilePath(const std::string & filePath) {
+  FABRIC_TRY("GLWidget::addFilePath",
+
+    FabricCore::RTVal filePathVal = constructStringRTVal(filePath.c_str());
+    m_viewport.callMethod("", "addFilePath", 1, &filePathVal);
+
+  );
+}
