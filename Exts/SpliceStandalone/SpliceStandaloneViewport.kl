@@ -3,97 +3,20 @@ require InlineDrawing;
 require Util;
 require Singletons;
 
-const Integer SpliceStandaloneViewport_Interaction_User = 0;
-const Integer SpliceStandaloneViewport_Interaction_CameraMove = 1;
-
-const Integer SpliceStandaloneViewport_Button_Left = 1;
-const Integer SpliceStandaloneViewport_Button_Right = 2;
-const Integer SpliceStandaloneViewport_Button_Middle = 4;
-
-const Integer SpliceStandaloneViewport_Modifier_Alt = 1;
-const Integer SpliceStandaloneViewport_Modifier_Shift = 2;
-const Integer SpliceStandaloneViewport_Modifier_Control = 4;
-
-alias Integer SpliceStandaloneViewportPhase;
-
-/// fired during setup of the GL window
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Initialize = 0;
-
-/// fired during resize of the GL window
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Resize = 1;
-
-/// fired before the camera data is copied into the rendering setup
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Camera = 2;
-
-/// fired before painting is performed
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_BeforePaint = 3;
-
-/// fired during painting
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_Paint = 4;
-
-/// fired once painting is completed
-const SpliceStandaloneViewportPhase SpliceStandaloneViewportPhase_AfterPaint = 5;
-
-object SpliceStandaloneViewport;
-
-interface SpliceStandaloneViewportCallback
-{
-  Boolean perform!(SpliceStandaloneViewportPhase phase, io SpliceStandaloneViewport viewport);
-};
-
-object SpliceStandaloneViewport {
+object SpliceStandaloneViewport : OGLInlineViewport {
   Integer windowId;
-  Size width;
-  Size height;
-  SpliceStandaloneCamera camera;
-  Vec2 lastMousePos;
-  Integer interactionState;
-  DrawContext drawContext;
-  InlineInstance gridInstance;
   String filePaths[];
-  /// \internal
-  SpliceStandaloneViewportCallback callbacks[SpliceStandaloneViewportPhase];
+  InlineInstance gridInstance;
 };
-
-function SpliceStandaloneViewport() {
-  this.camera = SpliceStandaloneCamera();
-  this.drawContext = DrawContext();
-  this.drawContext.viewport = InlineViewport();
-  this.drawContext.viewport.camera = InlineCamera();
-  this.interactionState = SpliceStandaloneViewport_Interaction_User;
-
-  Singleton_set('Viewport', this);
-}
 
 function SpliceStandaloneViewport.addFilePath!(String filePath) {
   this.filePaths.push(filePath);
 }
 
-function SpliceStandaloneViewport.registerCallback!(SpliceStandaloneViewportPhase phase, SpliceStandaloneViewportCallback callback) {
-  if(callback == null)
-    this.deregisterCallback(phase);
-  else
-    this.callbacks[phase] = callback;
-}
+function Boolean SpliceStandaloneViewport.setup!(io DrawContext context) {
 
-function SpliceStandaloneViewport.deregisterCallback!(SpliceStandaloneViewportPhase phase) {
-  if(this.callbacks.has(phase))
-    this.callbacks.delete(phase);
-}
-
-/// \internal
-function Boolean SpliceStandaloneViewport.performCallback!(SpliceStandaloneViewportPhase phase) {
-  SpliceStandaloneViewportCallback callback = this.callbacks.get(phase, null);
-  if(callback == null)
-    return false;
-  SpliceStandaloneViewport viewport = this;
-  return callback.perform(phase, viewport);
-}
-
-function SpliceStandaloneViewport.initializeGL!() {
-
-  if(this.performCallback(SpliceStandaloneViewportPhase_Initialize))
-    return;
+  // if(this.performCallback(SpliceStandaloneViewportPhase_Initialize))
+  //   return;
 
   glClearColor(0.7, 0.7, 0.7, 1);
 
@@ -114,73 +37,44 @@ function SpliceStandaloneViewport.initializeGL!() {
   if (gl_err != GL_NO_ERROR)
   {
    report("GL error: " + gl_err);
-   return;
+   return false;
   }
 
-  if(!this.gridInstance)
-  {
-    // setup the grid
-    InlineDrawing drawing = OGLInlineDrawing_GetInstance();
+  OGLInlineDrawing drawing = OGLInlineDrawing_GetInstance();
+  drawing.setupSceneGrid('StandaloneGrid', 20, 20, 20, 20, Color(0.05, 0.05, 0.05));
 
-    InlineDebugShape grid = drawing.registerShape(InlineDebugShape('StandaloneGrid'));
-
-    Scalar scale = 2.0;
-    for(Integer x=-10;x<11;x++)
-      grid.drawLine(Vec3(x, 0, -10) * scale, Vec3(x, 0, 10) * scale);
-    for(Integer z=-10;z<11;z++)
-      grid.drawLine(Vec3(-10, 0, z) * scale, Vec3(10, 0, z) * scale);
-
-    InlineShader shader = drawing.registerShader(OGLFlatShader());
-    InlineMaterial mat = shader.getOrCreateMaterial('grey');
-    mat.setUniform('u_color', Color(0.05, 0.05, 0.05));
-    this.gridInstance = InlineInstance('StandaloneGrid', drawing.getRoot(), grid, mat);
-  }
+  return true;
 }
 
-function Boolean SpliceStandaloneViewport.paintGL!() {
+function Boolean SpliceStandaloneViewport.draw!(io DrawContext context) {
 
-  this.performCallback(SpliceStandaloneViewportPhase_Camera);
+  // this.performCallback(SpliceStandaloneViewportPhase_BeforePaint);
 
-  // update the inline viewport
-  this.drawContext.viewport.dimensions.x = this.width;
-  this.drawContext.viewport.dimensions.y = this.height;
-  this.drawContext.viewport.camera.isOrthographic = false;
-  this.drawContext.viewport.camera.fovY = this.camera.fovY;
-  this.drawContext.viewport.camera.mat44 = this.camera.getMatrix();
-  this.drawContext.viewport.camera.nearDistance = this.camera.nearValue;
-  this.drawContext.viewport.camera.farDistance = this.camera.farValue;
-
-  this.performCallback(SpliceStandaloneViewportPhase_BeforePaint);
-
-  if(!this.performCallback(SpliceStandaloneViewportPhase_Paint)) {
+  // if(!this.performCallback(SpliceStandaloneViewportPhase_Paint)) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    InlineDrawing drawing = OGLInlineDrawing_GetInstance();
-    drawing.draw(this.drawContext);
+  // }
 
-    this.drawContext.viewport.camera.mat44 = this.camera.getMatrix();
-
-  }
-
-  return this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);
+  // return this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);
+  return true;
 }
 
-function SpliceStandaloneViewport.resizeGL!() {
+function Boolean SpliceStandaloneViewport.resize!(Size width, Size height) {
 
-  if(this.performCallback(SpliceStandaloneViewportPhase_Resize))
-    return;
+  // if(this.performCallback(SpliceStandaloneViewportPhase_Resize))
+  //   return;
 
-  glViewport(0, 0, this.width, this.height);
+  if(!this.parent#resize(width, height))
+    return false;
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-}
 
-function SpliceStandaloneViewport.setTime!(Scalar time) {
-  this.drawContext.time = time;
+  return true;
 }
 
 function SpliceStandaloneViewport.setWireFrame!(Boolean wireFrame) {
@@ -194,50 +88,6 @@ function SpliceStandaloneViewport.setWireFrame!(Boolean wireFrame) {
       wireFrameShader.setWireFrame(wireFrame);
     }
   }
-}
-
-function SpliceStandaloneViewport.mousePressEvent!(Integer posX, Integer posY, Integer buttons, Integer modifiers) {
-  this.lastMousePos.x = posX;
-  this.lastMousePos.y = posY;
-}
-
-function SpliceStandaloneViewport.mouseMoveEvent!(Integer posX, Integer posY, Integer buttons, Integer modifiers) {
-  Integer dx = this.lastMousePos.x - posX;
-  Integer dy = this.lastMousePos.y - posY;
-  Vec2 move(Scalar(dx) / Scalar(this.width), Scalar(dy) / Scalar(this.height));
-
-  // Camera motion (alt key pressed)
-  if (modifiers & SpliceStandaloneViewport_Modifier_Alt)
-  {
-    if (buttons & SpliceStandaloneViewport_Button_Left)
-    {
-      this.interactionState = SpliceStandaloneViewport_Interaction_CameraMove;
-      this.camera.orbit(move * 5.0);
-    }
-    if (buttons & SpliceStandaloneViewport_Button_Middle)
-    {
-      this.interactionState = SpliceStandaloneViewport_Interaction_CameraMove;
-      this.camera.pan(move * 12.0);
-    }
-    if (buttons & SpliceStandaloneViewport_Button_Right)
-    {
-      this.interactionState = SpliceStandaloneViewport_Interaction_CameraMove;
-      this.camera.dolly((move.x - move.y) * 0.5);
-    }
-  }
-  else
-    this.interactionState = SpliceStandaloneViewport_Interaction_User;
-
-  this.lastMousePos.x = posX;
-  this.lastMousePos.y = posY;
-}
-
-function SpliceStandaloneViewport.mouseReleaseEvent!(Integer posX, Integer posY, Integer buttons, Integer modifiers) {
-  this.interactionState = SpliceStandaloneViewport_Interaction_User;
-}
-
-function SpliceStandaloneViewport.wheelEvent!(Integer delta) {
-  this.camera.dolly(Scalar(-delta) * 0.0003);
 }
 
 function SpliceStandaloneViewport.toggleGrid!() {

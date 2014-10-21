@@ -2,7 +2,6 @@
   "version": "1.0.1",
   "code": [
 
-    "SpliceStandaloneCamera.kl",
     "SpliceStandaloneViewport.kl"
 
   ]
