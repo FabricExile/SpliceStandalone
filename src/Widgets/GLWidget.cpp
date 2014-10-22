@@ -151,9 +151,10 @@ void GLWidget::paintGL()
   {
     FABRIC_TRY("GLWidget::resizeGL",
 
-      std::vector<FabricCore::RTVal> args(2);
-      args[0] = constructUInt32RTVal(m_width);
-      args[1] = constructUInt32RTVal(m_height);
+      std::vector<FabricCore::RTVal> args(3);
+      args[0] = m_drawContext;
+      args[1] = constructUInt32RTVal(m_width);
+      args[2] = constructUInt32RTVal(m_height);
       m_viewport.callMethod("", "resize", args.size(), &args[0]);
 
     );
