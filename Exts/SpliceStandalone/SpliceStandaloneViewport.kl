@@ -7,7 +7,15 @@ object SpliceStandaloneViewport : OGLInlineViewport {
   Integer windowId;
   String filePaths[];
   InlineInstance gridInstance;
+  Color bgColor;
 };
+
+function SpliceStandaloneViewport() {
+  this.bgColor = Color(0.7, 0.7, 0.7);
+  this.camera = InlineCamera(50.0 * DEG_TO_RAD, 0.01, 1000.0, false);
+  this.camera.xfo.tr = Vec3(30, 20, 40) * 0.6;
+  this.camera.xfo.ori.setFromDirectionAndUpvector(this.camera.xfo.tr, Vec3(0, 1, 0));
+}
 
 function SpliceStandaloneViewport.addFilePath!(String filePath) {
   this.filePaths.push(filePath);
@@ -18,11 +26,11 @@ function Boolean SpliceStandaloneViewport.setup!(io DrawContext context) {
   // if(this.performCallback(SpliceStandaloneViewportPhase_Initialize))
   //   return;
 
-  glClearColor(0.7, 0.7, 0.7, 1);
+  glClearColor(this.bgColor.r, this.bgColor.g, this.bgColor.b, 1);
 
   glEnable(GL_COLOR_MATERIAL);
-  glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-  glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+  // glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+  // glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
 
   glShadeModel(GL_SMOOTH);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -41,7 +49,9 @@ function Boolean SpliceStandaloneViewport.setup!(io DrawContext context) {
   }
 
   OGLInlineDrawing drawing = OGLInlineDrawing_GetInstance();
-  drawing.setupSceneGrid('StandaloneGrid', 20, 20, 20, 20, Color(0.05, 0.05, 0.05));
+  this.gridInstance = drawing.setupSceneGrid('StandaloneGrid', 20, 20, 20, 20, Color(0.05, 0.05, 0.05));
+
+  this.responsibleForSwappingBuffers = false;
 
   return true;
 }
@@ -52,8 +62,17 @@ function Boolean SpliceStandaloneViewport.draw!(io DrawContext context) {
 
   // if(!this.performCallback(SpliceStandaloneViewportPhase_Paint)) {
 
+    glClearColor(this.bgColor.r, this.bgColor.g, this.bgColor.b, 1);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Enable the camera to update its possition.
+    // based on Camera manipulation.
+    this.camera.update();
 
   // }
 
