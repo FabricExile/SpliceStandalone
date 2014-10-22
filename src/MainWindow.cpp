@@ -76,40 +76,13 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
         return true;
       }
       case Qt::Key_W:
-      {
-        m_window->m_glWidget->walk(0, 0, -1);
-        return true;
-      }
       case Qt::Key_S:
-      {
-        m_window->m_glWidget->walk(0, 0, 1);
-        return true;
-      }
       case Qt::Key_A:
-      {
-        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
-          m_window->m_glWidget->turn(5 * 3.14 / 180.0, 0);
-        else
-          m_window->m_glWidget->walk(-1, 0, 0);
-        return true;
-      }
       case Qt::Key_D:
-      {
-        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
-          m_window->m_glWidget->turn(-5 * 3.14 / 180.0, 0);
-        else
-          m_window->m_glWidget->walk(1, 0, 0);
-        return true;
-      }
       case Qt::Key_PageUp:
-      {
-        m_window->m_glWidget->walk(0, 1, 0);
-        return true;
-      }
       case Qt::Key_PageDown:
       {
-        m_window->m_glWidget->walk(0, -1, 0);
-        return true;
+        return m_window->m_glWidget->manipulateCamera(event);
       }
       case Qt::Key_F11:
       {
