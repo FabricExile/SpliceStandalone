@@ -23,8 +23,8 @@ function SpliceStandaloneViewport.addFilePath!(String filePath) {
 
 function Boolean SpliceStandaloneViewport.setup!(io DrawContext context) {
 
-  // if(this.performCallback(SpliceStandaloneViewportPhase_Initialize))
-  //   return;
+  if(this.parent#setup(context))
+    return true;
 
   glClearColor(this.bgColor.r, this.bgColor.g, this.bgColor.b, 1);
 
@@ -53,40 +53,13 @@ function Boolean SpliceStandaloneViewport.setup!(io DrawContext context) {
 
   this.responsibleForSwappingBuffers = false;
 
-  return true;
+  return false;
 }
 
-function Boolean SpliceStandaloneViewport.draw!(io DrawContext context) {
+function Boolean SpliceStandaloneViewport.resize!(io DrawContext context, Size width, Size height) {
 
-  // this.performCallback(SpliceStandaloneViewportPhase_BeforePaint);
-
-  // if(!this.performCallback(SpliceStandaloneViewportPhase_Paint)) {
-
-    glClearColor(this.bgColor.r, this.bgColor.g, this.bgColor.b, 1);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // Enable the camera to update its possition.
-    // based on Camera manipulation.
-    this.camera.update();
-
-  // }
-
-  // return this.performCallback(SpliceStandaloneViewportPhase_AfterPaint);
-  return true;
-}
-
-function Boolean SpliceStandaloneViewport.resize!(Size width, Size height) {
-
-  // if(this.performCallback(SpliceStandaloneViewportPhase_Resize))
-  //   return;
-
-  if(!this.parent#resize(width, height))
-    return false;
+  if(this.parent#resize(context, width, height))
+    return true;
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
