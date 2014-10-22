@@ -22,7 +22,7 @@ if FABRIC_BUILD_OS != 'Windows':
   qtDir = '/usr'
 
 # create the build environment
-env = Environment(tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
+env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
 if FABRIC_BUILD_OS == 'Linux':
   env.Replace(QT_MOC = '$QT_BINPATH/moc-qt4')
 
