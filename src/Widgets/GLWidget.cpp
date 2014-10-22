@@ -50,6 +50,9 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
   m_requiresInitialize = true;
   m_requiresResize = true;
   m_resizeEnabled = true;
+  m_width = 0;
+  m_height = 0;
+
 }
 
 GLWidget::~GLWidget()
@@ -62,12 +65,13 @@ void GLWidget::resetRTVals()
 {
   FABRIC_TRY("GLWidget::resetRTVals",
 
-    m_camera = constructObjectRTVal("SpliceStandaloneCamera");
-    if(!m_camera.isValid())
+    m_drawing = constructObjectRTVal("OGLInlineDrawing");
+    if(!m_drawing.isValid())
     {
-      printf("[GLWidget] Error: Cannot construct SpliceStandaloneCamera RTVal (extension loaded?)\n");
+      printf("[GLWidget] Error: Cannot construct OGLInlineDrawing RTVal (extension loaded?)\n");
       return;
     }
+    m_drawing = m_drawing.callMethod("OGLInlineDrawing", "getInstance", 0, 0);
 
     m_viewport = constructObjectRTVal("SpliceStandaloneViewport");
     if(!m_viewport.isValid())
@@ -75,8 +79,15 @@ void GLWidget::resetRTVals()
       printf("[GLWidget] Error: Cannot construct SpliceStandaloneViewport RTVal (extension loaded?)\n");
       return;
     }
+    else
+    {
+      std::vector<FabricCore::RTVal> args(2);
+      args[0] = constructStringRTVal("default");
+      args[1] = m_viewport;
+      m_drawing.callMethod("", "registerViewport", args.size(), &args[0]);
+    }
 
-    m_viewport.setMember("camera", m_camera);
+    m_camera = m_viewport.maybeGetMember("camera");
     m_viewport.setMember("windowId", constructUInt64RTVal((uint64_t)this->winId()));
 
     m_drawContext = constructObjectRTVal("DrawContext");
@@ -95,12 +106,7 @@ void GLWidget::resetRTVals()
 
 FabricCore::RTVal GLWidget::getInlineViewport()
 {
-  FABRIC_TRY_RETURN("GLWidget::getInlineViewport", FabricCore::RTVal(),
-
-     FabricCore::RTVal drawContext = m_viewport.maybeGetMember("drawContext");
-     return drawContext.maybeGetMember("viewport");
-
-  );
+  return m_viewport;
 }
 
 void GLWidget::paintGL()
@@ -134,7 +140,7 @@ void GLWidget::paintGL()
   {
     FABRIC_TRY("GLWidget::initializeGL",
 
-      m_viewport.callMethod("", "initializeGL", 0, 0);
+      m_viewport.callMethod("", "setup", 1, &m_drawContext);
 
     );
     m_requiresInitialize = false;
@@ -145,7 +151,10 @@ void GLWidget::paintGL()
   {
     FABRIC_TRY("GLWidget::resizeGL",
 
-      m_viewport.callMethod("", "resizeGL", 0, 0);
+      std::vector<FabricCore::RTVal> args(2);
+      args[0] = constructUInt32RTVal(m_width);
+      args[1] = constructUInt32RTVal(m_height);
+      m_viewport.callMethod("", "resize", args.size(), &args[0]);
 
     );
     m_requiresResize = false;
@@ -154,15 +163,20 @@ void GLWidget::paintGL()
 
   m_painting = true;
 
-  bool performedSwapBuffers = false;
+  bool responsibleForSwappingBuffers = false;
 
   FABRIC_TRY("GLWidget::paintGL",
 
-    performedSwapBuffers = m_viewport.callMethod("Boolean", "paintGL", 0, 0).getBoolean();
+    std::vector<FabricCore::RTVal> args(2);
+    args[0] = constructStringRTVal("default");
+    args[1] = m_drawContext;
+    m_drawing.callMethod("", "drawViewport", args.size(), &args[0]);
 
+    FabricCore::RTVal responsibleForSwappingBuffersVal = m_viewport.maybeGetMember("responsibleForSwappingBuffers");
+    responsibleForSwappingBuffers = responsibleForSwappingBuffersVal.getBoolean();
   );
 
-  if(!performedSwapBuffers)
+  if(!responsibleForSwappingBuffers)
     swapBuffers();
 
   emit redrawn();
@@ -175,7 +189,7 @@ void GLWidget::setTime(float time)
   FABRIC_TRY("GLWidget::setTime",
 
     FabricCore::RTVal timeVal = constructFloat32RTVal(time);
-    m_viewport.callMethod("", "setTime", 1, &timeVal);
+    m_drawContext.setMember("time", timeVal);
 
   );
   updateGL();
@@ -198,16 +212,6 @@ void GLWidget::toggleGrid()
   FABRIC_TRY("GLWidget::toggleGrid",
 
     m_viewport.callMethod("", "toggleGrid", 0, 0);
-
-  );
-  updateGL();
-}
-
-void GLWidget::resetCameraPosition()
-{
-  FABRIC_TRY("GLWidget::resetCameraPosition",
-
-    m_camera.callMethod("", "resetPosition", 0, 0);
 
   );
   updateGL();
@@ -245,9 +249,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
   FABRIC_TRY("GLWidget::mousePressEvent",
 
-    std::vector<FabricCore::RTVal> args;
-    getArgsForMouseEvent(event, args);
-    m_viewport.callMethod("", "mousePressEvent", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args;
+    // getArgsForMouseEvent(event, args);
+    // m_viewport.callMethod("", "mousePressEvent", args.size(), &args[0]);
 
   );
   updateGL();
@@ -257,9 +262,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
   FABRIC_TRY("GLWidget::mouseMoveEvent",
 
-    std::vector<FabricCore::RTVal> args;
-    getArgsForMouseEvent(event, args);
-    m_viewport.callMethod("", "mouseMoveEvent", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args;
+    // getArgsForMouseEvent(event, args);
+    // m_viewport.callMethod("", "mouseMoveEvent", args.size(), &args[0]);
 
   );
   updateGL();
@@ -269,9 +275,10 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   FABRIC_TRY("GLWidget::mouseReleaseEvent",
 
-    std::vector<FabricCore::RTVal> args;
-    getArgsForMouseEvent(event, args);
-    m_viewport.callMethod("", "mouseReleaseEvent", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args;
+    // getArgsForMouseEvent(event, args);
+    // m_viewport.callMethod("", "mouseReleaseEvent", args.size(), &args[0]);
 
   );
   updateGL();
@@ -281,9 +288,10 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
   FABRIC_TRY("GLWidget::wheelEvent",
 
-    std::vector<FabricCore::RTVal> args(1);
-    args[0] = constructSInt32RTVal(event->delta());
-    m_viewport.callMethod("", "wheelEvent", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args(1);
+    // args[0] = constructSInt32RTVal(event->delta());
+    // m_viewport.callMethod("", "wheelEvent", args.size(), &args[0]);
 
   );
 	updateGL();
@@ -302,14 +310,9 @@ void GLWidget::resizeGL(int width, int height)
     return;
   if(isGLFullScreen())
     return;
-  m_painting = true;
 
-  FABRIC_TRY("GLWidget::resizeGL",
-
-    m_viewport.setMember("width", constructUInt32RTVal(width));
-    m_viewport.setMember("height", constructUInt32RTVal(height));
-
-  );
+  m_width = width;
+  m_height = height;
 
   m_painting = false;
   m_requiresResize = true;
@@ -330,12 +333,8 @@ void GLWidget::toggleGLFullScreen()
 
     m_requiresInitialize = true;
 
-    FABRIC_TRY("GLWidget::toggleGLFullScreen",
-
-      m_viewport.setMember("width", constructUInt32RTVal(m_prevParent->width()));
-      m_viewport.setMember("height", constructUInt32RTVal(m_prevParent->height()));
-
-    );
+    m_width = m_prevParent->width();
+    m_height = m_prevParent->height();
 
     m_prevParent = NULL;
 
@@ -355,12 +354,8 @@ void GLWidget::toggleGLFullScreen()
     m_fullScreenDialog->setWindowFlags(Qt::SplashScreen);
     m_fullScreenDialog->resize(QApplication::desktop()->width(), QApplication::desktop()->height());
 
-    FABRIC_TRY("GLWidget::toggleGLFullScreen",
-
-      m_viewport.setMember("width", constructUInt32RTVal(QApplication::desktop()->width()));
-      m_viewport.setMember("height", constructUInt32RTVal(QApplication::desktop()->height()));
-
-    );
+    m_width = QApplication::desktop()->width();
+    m_height = QApplication::desktop()->height();
 
     m_requiresInitialize = true;
     m_fullScreenDialog->show();
@@ -371,11 +366,12 @@ void GLWidget::toggleGLFullScreen()
 void GLWidget::walk(float x, float y, float z) {
   FABRIC_TRY("GLWidget::walk",
 
-    std::vector<FabricCore::RTVal> args(3);
-    args[0] = constructFloat32RTVal(x);
-    args[1] = constructFloat32RTVal(y);
-    args[2] = constructFloat32RTVal(z);
-    m_camera.callMethod("", "walk", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args(3);
+    // args[0] = constructFloat32RTVal(x);
+    // args[1] = constructFloat32RTVal(y);
+    // args[2] = constructFloat32RTVal(z);
+    // m_camera.callMethod("", "walk", args.size(), &args[0]);
 
   );
   updateGL();
@@ -384,10 +380,11 @@ void GLWidget::walk(float x, float y, float z) {
 void GLWidget::turn(float x, float y) {
   FABRIC_TRY("GLWidget::turn",
 
-    std::vector<FabricCore::RTVal> args(2);
-    args[0] = constructFloat32RTVal(x);
-    args[1] = constructFloat32RTVal(y);
-    m_camera.callMethod("", "turn", args.size(), &args[0]);
+    // todo: phtaylor
+    // std::vector<FabricCore::RTVal> args(2);
+    // args[0] = constructFloat32RTVal(x);
+    // args[1] = constructFloat32RTVal(y);
+    // m_camera.callMethod("", "turn", args.size(), &args[0]);
 
   );
   updateGL();

@@ -37,7 +37,6 @@ namespace FabricSplice
     void toggleGLFullScreen();
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
     
-    void resetCameraPosition();
     void walk(float x, float y, float z);
     void turn(float x, float y);
     void addFilePath(const std::string & filePath);
@@ -61,6 +60,7 @@ namespace FabricSplice
     void mouseReleaseEvent(QMouseEvent *event);
   	void wheelEvent(QWheelEvent *event);
 
+    FabricCore::RTVal m_drawing;
     FabricCore::RTVal m_camera;
     FabricCore::RTVal m_viewport;
     FabricCore::RTVal m_drawContext;
@@ -74,6 +74,8 @@ namespace FabricSplice
     double m_fpsStack[16];
     bool m_redrawEnabled;
     bool m_painting;
+    unsigned int m_width;
+    unsigned int m_height;
 
     QWidget * m_prevParent;
     QDialog * m_fullScreenDialog;
