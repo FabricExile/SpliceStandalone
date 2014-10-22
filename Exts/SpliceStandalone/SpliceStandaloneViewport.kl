@@ -13,8 +13,7 @@ object SpliceStandaloneViewport : OGLInlineViewport {
 function SpliceStandaloneViewport() {
   this.bgColor = Color(0.7, 0.7, 0.7);
   this.camera = InlineCamera(50.0 * DEG_TO_RAD, 0.01, 1000.0, false);
-  this.camera.xfo.tr = Vec3(30, 20, 40) * 0.6;
-  this.camera.xfo.ori.setFromDirectionAndUpvector(this.camera.xfo.tr, Vec3(0, 1, 0));
+  this.camera.setFromPositionAndTarget(Vec3(30, 20, 40) * 0.6, Vec3(0, 1, 0));
 }
 
 function SpliceStandaloneViewport.addFilePath!(String filePath) {

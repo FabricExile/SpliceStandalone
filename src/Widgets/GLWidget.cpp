@@ -89,7 +89,7 @@ void GLWidget::resetRTVals()
     }
 
     m_camera = m_viewport.maybeGetMember("camera");
-    m_cameraManipulator = constructObjectRTVal("DrawContext", 1, &m_camera);
+    m_cameraManipulator = constructObjectRTVal("CameraManipulator", 1, &m_camera);
 
     m_viewport.setMember("windowId", constructUInt64RTVal((uint64_t)this->winId()));
 
@@ -228,45 +228,22 @@ void GLWidget::toggleGrid()
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-
-  FABRIC_TRY("GLWidget::mousePressEvent",
-
-    // Now we translate the Qt events to FabricEngine events..
-    FabricCore::RTVal klevent = QtToKLEvent(event, m_viewport);
-
-    // And then pass the event to the camera manipulator for handling.
-    m_cameraManipulator.callMethod("", "onEvent", 1, &klevent);
-
-  );
-  updateGL();
+  manipulateCamera(event);
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-  FABRIC_TRY("GLWidget::mouseMoveEvent",
-
-    // Now we translate the Qt events to FabricEngine events..
-    FabricCore::RTVal klevent = QtToKLEvent(event, m_viewport);
-
-    // And then pass the event to the camera manipulator for handling.
-    m_cameraManipulator.callMethod("", "onEvent", 1, &klevent);
-
-  );
-  updateGL();
+  manipulateCamera(event);
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  FABRIC_TRY("GLWidget::mouseReleaseEvent",
+  manipulateCamera(event);
+}
 
-    // Now we translate the Qt events to FabricEngine events..
-    FabricCore::RTVal klevent = QtToKLEvent(event, m_viewport);
-
-    // And then pass the event to the camera manipulator for handling.
-    m_cameraManipulator.callMethod("", "onEvent", 1, &klevent);
-
-  );
-  updateGL();
+void GLWidget::wheelEvent(QWheelEvent *event)
+{
+  manipulateCamera(event);
 }
 
 bool GLWidget::manipulateCamera(QEvent *event)

@@ -61,7 +61,7 @@ namespace FabricSplice
   public slots:
     void updateViews();
 
-    void activateManipulator();
+    void toggleManipulation();
 
     void attributeChanged( QSpliceGraphWrapper wrapper, std::string attributeName );
     void timeChanged(int frame);

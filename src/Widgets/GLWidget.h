@@ -56,6 +56,7 @@ namespace FabricSplice
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
     FabricCore::RTVal m_drawing;
     FabricCore::RTVal m_camera;

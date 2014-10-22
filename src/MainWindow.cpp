@@ -72,7 +72,7 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
       }
       case Qt::Key_Q:
       {
-        m_window->activateManipulator();
+        m_window->toggleManipulation();
         return true;
       }
       case Qt::Key_W:
@@ -94,6 +94,23 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
         if(m_window->m_glWidget->isGLFullScreen())
           m_window->m_glWidget->toggleGLFullScreen();
         return true;
+      }
+    }
+  }
+  else if (event->type() == QEvent::KeyRelease) 
+  {
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+
+    switch(keyEvent->key())
+    {
+      case Qt::Key_W:
+      case Qt::Key_S:
+      case Qt::Key_A:
+      case Qt::Key_D:
+      case Qt::Key_PageUp:
+      case Qt::Key_PageDown:
+      {
+        return m_window->m_glWidget->manipulateCamera(event);
       }
     }
   }
@@ -392,7 +409,7 @@ void MainWindow::updateViews()
   }
 }
 
-void MainWindow::activateManipulator()
+void MainWindow::toggleManipulation()
 {
 	if (!m_manipulatorContext->isActive())
 	{
