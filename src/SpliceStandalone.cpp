@@ -154,6 +154,7 @@ SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & spliceP
   FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
   context.setMember("host", FabricSplice::constructStringRTVal("Splice Standalone"));
   context.setMember("graph", FabricSplice::constructStringRTVal(splicePath.c_str()));
+  context.setMember("currentFilePath", FabricSplice::constructStringRTVal(splicePath.c_str()));
 
   if(m_mainWindow)
     m_mainWindow->updateViews();
@@ -167,7 +168,6 @@ SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & spliceP
   if(m_mainWindow)
   {
     m_mainWindow->setGlViewEnabled(true);
-    m_mainWindow->addFilePath(splicePath);
     m_mainWindow->redraw();
   }
   
@@ -214,7 +214,7 @@ void SpliceStandalone::constructFabricClient()
 
     client.loadExtension("Animation", "", false);
     client.loadExtension("InlineDrawing", "", false);
-    client.loadExtension("SpliceStandalone", "", false);
+    client.loadExtension("Manipulation", "", false);
   );
 }
 
