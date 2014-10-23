@@ -21,6 +21,7 @@
 #include <boost/filesystem.hpp>
 
 #include "macros.h"
+#include "QtToKLEvent.h"
 
 using namespace FabricSplice;
 
@@ -88,6 +89,8 @@ void GLWidget::resetRTVals()
     }
 
     m_camera = m_viewport.maybeGetMember("camera");
+    m_cameraManipulator = constructObjectRTVal("CameraManipulator", 1, &m_camera);
+
     m_viewport.setMember("windowId", constructUInt64RTVal((uint64_t)this->winId()));
 
     m_drawContext = constructObjectRTVal("DrawContext");
@@ -222,80 +225,41 @@ void GLWidget::toggleGrid()
 /* QGLWidget calls                                                       */
 /*************************************************************************/
 
-void GLWidget::getArgsForMouseEvent(QMouseEvent * event, std::vector<FabricCore::RTVal> & args)
-{
-  args.resize(4);
-  args[0] = constructSInt32RTVal(event->pos().x());
-  args[1] = constructSInt32RTVal(event->pos().y());
-  int buttons = 0;
-  if(event->buttons().testFlag(Qt::LeftButton))
-    buttons += 1;
-  if(event->buttons().testFlag(Qt::RightButton))
-    buttons += 2;
-  if(event->buttons().testFlag(Qt::MidButton))
-    buttons += 4;
-  args[2] = constructSInt32RTVal(buttons);
-  int modifiers = 0;
-  if(qApp->keyboardModifiers().testFlag(Qt::AltModifier))
-    modifiers += 1;
-  if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
-    modifiers += 2;
-  if(qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
-    modifiers += 4;
-  args[3] = constructSInt32RTVal(modifiers);
-}
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-
-  FABRIC_TRY("GLWidget::mousePressEvent",
-
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args;
-    // getArgsForMouseEvent(event, args);
-    // m_viewport.callMethod("", "mousePressEvent", args.size(), &args[0]);
-
-  );
-  updateGL();
+  manipulateCamera(event);
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-  FABRIC_TRY("GLWidget::mouseMoveEvent",
-
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args;
-    // getArgsForMouseEvent(event, args);
-    // m_viewport.callMethod("", "mouseMoveEvent", args.size(), &args[0]);
-
-  );
-  updateGL();
+  manipulateCamera(event);
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  FABRIC_TRY("GLWidget::mouseReleaseEvent",
-
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args;
-    // getArgsForMouseEvent(event, args);
-    // m_viewport.callMethod("", "mouseReleaseEvent", args.size(), &args[0]);
-
-  );
-  updateGL();
+  manipulateCamera(event);
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
-  FABRIC_TRY("GLWidget::wheelEvent",
+  manipulateCamera(event);
+}
 
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args(1);
-    // args[0] = constructSInt32RTVal(event->delta());
-    // m_viewport.callMethod("", "wheelEvent", args.size(), &args[0]);
+bool GLWidget::manipulateCamera(QEvent *event)
+{
+  bool result;
+  FABRIC_TRY_RETURN("GLWidget::manipulateCamera", false,
 
+    // Now we translate the Qt events to FabricEngine events..
+    FabricCore::RTVal klevent = QtToKLEvent(event, m_viewport);
+
+    // And then pass the event to the camera manipulator for handling.
+    m_cameraManipulator.callMethod("", "onEvent", 1, &klevent);
+    result = klevent.callMethod("Boolean", "isAccepted", 0, 0).getBoolean();
   );
-	updateGL();
+  updateGL();
+  return result;
 }
 
 void GLWidget::initializeGL()
@@ -364,29 +328,3 @@ void GLWidget::toggleGLFullScreen()
   }        
 }
 
-void GLWidget::walk(float x, float y, float z) {
-  FABRIC_TRY("GLWidget::walk",
-
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args(3);
-    // args[0] = constructFloat32RTVal(x);
-    // args[1] = constructFloat32RTVal(y);
-    // args[2] = constructFloat32RTVal(z);
-    // m_camera.callMethod("", "walk", args.size(), &args[0]);
-
-  );
-  updateGL();
-}
-
-void GLWidget::turn(float x, float y) {
-  FABRIC_TRY("GLWidget::turn",
-
-    // todo: phtaylor
-    // std::vector<FabricCore::RTVal> args(2);
-    // args[0] = constructFloat32RTVal(x);
-    // args[1] = constructFloat32RTVal(y);
-    // m_camera.callMethod("", "turn", args.size(), &args[0]);
-
-  );
-  updateGL();
-}

@@ -26,6 +26,7 @@ namespace FabricSplice
   	virtual ~GLWidget();
 
   	FabricCore::RTVal getInlineViewport();
+    bool manipulateCamera(QEvent *event);
 
     void resetRTVals();
 
@@ -37,9 +38,6 @@ namespace FabricSplice
     void toggleGLFullScreen();
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
     
-    void walk(float x, float y, float z);
-    void turn(float x, float y);
-
     /// returns the real frames per second of this TimeSlider
     double fps() const { return m_fps; }
 
@@ -53,14 +51,14 @@ namespace FabricSplice
     virtual void resizeGL(int w, int h);
     virtual void paintGL();
 
-    void getArgsForMouseEvent(QMouseEvent * event, std::vector<FabricCore::RTVal> & args);
-  	void mousePressEvent(QMouseEvent *event);
-  	void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-  	void wheelEvent(QWheelEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
     FabricCore::RTVal m_drawing;
     FabricCore::RTVal m_camera;
+    FabricCore::RTVal m_cameraManipulator;
     FabricCore::RTVal m_viewport;
     FabricCore::RTVal m_drawContext;
 

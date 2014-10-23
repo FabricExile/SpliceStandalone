@@ -72,44 +72,17 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
       }
       case Qt::Key_Q:
       {
-        m_window->activateManipulator();
+        m_window->toggleManipulation();
         return true;
       }
       case Qt::Key_W:
-      {
-        m_window->m_glWidget->walk(0, 0, -1);
-        return true;
-      }
       case Qt::Key_S:
-      {
-        m_window->m_glWidget->walk(0, 0, 1);
-        return true;
-      }
       case Qt::Key_A:
-      {
-        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
-          m_window->m_glWidget->turn(5 * 3.14 / 180.0, 0);
-        else
-          m_window->m_glWidget->walk(-1, 0, 0);
-        return true;
-      }
       case Qt::Key_D:
-      {
-        if(qApp->keyboardModifiers().testFlag(Qt::ShiftModifier))
-          m_window->m_glWidget->turn(-5 * 3.14 / 180.0, 0);
-        else
-          m_window->m_glWidget->walk(1, 0, 0);
-        return true;
-      }
       case Qt::Key_PageUp:
-      {
-        m_window->m_glWidget->walk(0, 1, 0);
-        return true;
-      }
       case Qt::Key_PageDown:
       {
-        m_window->m_glWidget->walk(0, -1, 0);
-        return true;
+        return m_window->m_glWidget->manipulateCamera(event);
       }
       case Qt::Key_F11:
       {
@@ -121,6 +94,23 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
         if(m_window->m_glWidget->isGLFullScreen())
           m_window->m_glWidget->toggleGLFullScreen();
         return true;
+      }
+    }
+  }
+  else if (event->type() == QEvent::KeyRelease) 
+  {
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+
+    switch(keyEvent->key())
+    {
+      case Qt::Key_W:
+      case Qt::Key_S:
+      case Qt::Key_A:
+      case Qt::Key_D:
+      case Qt::Key_PageUp:
+      case Qt::Key_PageDown:
+      {
+        return m_window->m_glWidget->manipulateCamera(event);
       }
     }
   }
@@ -419,7 +409,7 @@ void MainWindow::updateViews()
   }
 }
 
-void MainWindow::activateManipulator()
+void MainWindow::toggleManipulation()
 {
 	if (!m_manipulatorContext->isActive())
 	{
