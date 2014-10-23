@@ -50,6 +50,8 @@ bool SpliceGraphWrapper::reload()
 		m_dgGraph.clear();
     m_dgGraph.loadFromFile(m_path.c_str(), &info);
 
+    FabricCore::RTVal context = m_dgGraph.getEvalContext();
+    context.setMember("currentFilePath", FabricSplice::constructStringRTVal(m_path.c_str()));
   );
 
 	m_operatorIsValid = true;
