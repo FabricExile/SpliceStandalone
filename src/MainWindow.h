@@ -56,7 +56,6 @@ namespace FabricSplice
     // make sure the widgetRedraw;
     void redraw();
     void displayMessage(std::string message);
-    void addFilePath(const std::string & filePath);
 
   public slots:
     void updateViews();

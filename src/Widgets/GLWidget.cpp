@@ -74,10 +74,10 @@ void GLWidget::resetRTVals()
     }
     m_drawing = m_drawing.callMethod("OGLInlineDrawing", "getInstance", 0, 0);
 
-    m_viewport = constructObjectRTVal("SpliceStandaloneViewport");
+    m_viewport = constructObjectRTVal("OGLStandaloneViewport");
     if(!m_viewport.isValid())
     {
-      printf("[GLWidget] Error: Cannot construct SpliceStandaloneViewport RTVal (extension loaded?)\n");
+      printf("[GLWidget] Error: Cannot construct OGLStandaloneViewport RTVal (extension loaded?)\n");
       return;
     }
     else
@@ -328,12 +328,3 @@ void GLWidget::toggleGLFullScreen()
   }        
 }
 
-
-void GLWidget::addFilePath(const std::string & filePath) {
-  FABRIC_TRY("GLWidget::addFilePath",
-
-    FabricCore::RTVal filePathVal = constructStringRTVal(filePath.c_str());
-    m_viewport.callMethod("", "addFilePath", 1, &filePathVal);
-
-  );
-}

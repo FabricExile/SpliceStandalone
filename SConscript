@@ -135,18 +135,6 @@ if FABRIC_BUILD_OS == 'Windows':
   for qtLib in qtFlags['LIBS']:
     standaloneFiles.append(env.Install(binDir, env.Glob(os.path.join(qtBinDir, '*%s*.dll' % qtLib))))
 
-# install the extensions
-for ext in ['SpliceStandalone']:
-  standaloneFiles.append(
-    env.Install(
-      STAGE_DIR.Dir('Exts').Dir("SpliceStandalone"),
-      [
-        Glob(os.path.join('Exts', 'SpliceStandalone', '*.kl')),
-        Glob(os.path.join('Exts', 'SpliceStandalone', '*.json')),
-        ]
-      )
-    )
-  
 standaloneFiles.append(
   env.Install(
     STAGE_DIR.Dir('Resources'),

@@ -38,8 +38,6 @@ namespace FabricSplice
     void toggleGLFullScreen();
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
     
-    void addFilePath(const std::string & filePath);
-
     /// returns the real frames per second of this TimeSlider
     double fps() const { return m_fps; }
 

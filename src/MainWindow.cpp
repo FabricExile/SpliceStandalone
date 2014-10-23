@@ -426,7 +426,3 @@ void MainWindow::setGlViewEnabled(bool enable)
   m_glWidget->enableRedraw(enable);
 }
 
-void MainWindow::addFilePath(const std::string & filePath)
-{ 
-  m_glWidget->addFilePath(filePath);
-}

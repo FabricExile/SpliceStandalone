@@ -49,7 +49,6 @@ bool SpliceGraphWrapper::reload()
     // m_dgGraph = DGGraph(name().c_str());
 		m_dgGraph.clear();
     m_dgGraph.loadFromFile(m_path.c_str(), &info);
-
   );
 
 	m_operatorIsValid = true;
