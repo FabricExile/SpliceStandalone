@@ -1,0 +1,215 @@
+{
+  "version": "1014000",
+  "info": {
+    "hostAppName": "Splice Standalone",
+    "hostAppVersion": "1.0"
+  },
+  "nodes": [
+    {
+      "name": "DGNode",
+      "dependencies": {},
+      "bindings": [
+        {
+          "operator": {
+            "name": "spheresOp",
+            "entry": "spheresOp",
+            "filename": "spheresOp.kl",
+            "kl": "require Geometry;\nrequire InlineDrawing;\n\nrequire PolygonMesh;\nrequire Vec3;\nrequire Vec4;\nrequire SInt32;\nrequire Scalar;\nrequire Xfo;\nrequire Quat;\n\nfunction createSphere(Xfo root, Integer spans, Integer spans2, io PolygonMesh sphere, Scalar angleA ,Scalar angleB)\n{\n  Vec3 profile[];\n  for(Size i=0;i<spans;i++)\n  {\n    Vec3 pos(0, 1, 0.001);\n    if(i > 0)\n    {\n      Quat q;\n      q.setFromEulerAngles(Vec3(i * angleA / Scalar(spans - 1), 0.0, 0.0));\n      pos = q.rotateVector(pos);\n    }\n    profile.push(pos);\n  }\n\n  Xfo xfos[];\n  for(Size i=0;i<spans2;i++)\n  {\n    Xfo offset;\n    offset.setIdentity();\n    if(i > 0)\n      offset.ori.setFromEulerAngles(Vec3(0.0, 0.0, -Scalar(i) * angleB / Scalar(spans2 - 1)));\n    xfos.push(root * offset);\n  }\n\n  sphere.addExtrusion(xfos, profile, false);\n}\n\noperator spheresOp(io DrawingHandle handle, Integer nbSpheres, Integer spans, Integer spans2, Integer shells,  Scalar scaleFactor, Mat44 rootMat, Mat44 offsetMat, Vec3 moveA, Scalar angleA ,Scalar angleB, Scalar angleC, io PolygonMesh geo, Scalar thickness) {\n  geo.clear();\n  \n  Xfo root;\n  root.setFromMat44(rootMat);\n  root.sc = Vec3(1,1,1) * root.sc.x;\n\n  Xfo offset;\n  offset.setFromMat44(offsetMat);\n  offset.sc = Vec3(1,1,1) * offset.sc.x;\n  \n  Xfo inc;\n  inc.setIdentity();\n  inc.tr = moveA / Scalar(shells-1);\n  inc.sc *= scaleFactor;\n  inc.ori.setFromEulerAngles(Vec3(0.1, 0.1, 0.0));\n\n  for(Size i=0;i<nbSpheres;i++)\n  {\n    Xfo base = root;\n    if(i > 0)\n    {\n      Quat q;\n      q.setFromEulerAngles(Vec3(0.0, Scalar(i) * angleC / Scalar(nbSpheres), 0.0));\n      base.ori = base.ori * q;\n    }\n    base = base * offset;\n    for(Size j=0;j<shells;j++)\n    {\n      PolygonMesh sphere = PolygonMesh();\n      createSphere(base, spans, spans2, sphere, angleA, angleB);\n      geo.mergeMesh(sphere);\n      base = base * inc;\n    }\n  }\n  \n  geo.addShell(thickness);\n  geo.recomputePointNormals(Math_degToRad(60));\n\n  if(handle.isEmpty()) {\n    InlineDrawing draw = handle.getDrawing();\n    InlineShader shader = draw.registerShader(OGLSurfaceShader());\n    InlineMaterial mat = shader.getOrCreateMaterial('mat');\n    InlineShape shape = InlineMeshShape('mesh', geo);\n    InlineTransform rootTransform = handle.getRootTransform();\n    InlineTransform transform = rootTransform.addChild(StaticInlineTransform('mesh', Xfo()));\n    InlineInstance instance = mat.addInstance(SimpleInlineInstance('mesh', transform, shape));\n  }\n}\n",
+            "portmap": {}
+          }
+        }
+      ]
+    }
+  ],
+  "extensions": [],
+  "ports": [
+    {
+      "name": "angleA",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Scalar",
+      "autoInitObjects": true,
+      "member": "angleA",
+      "mode": "in",
+      "options": {
+        "uiMax": 5,
+        "uiMin": 0.05
+      },
+      "persistence": true,
+      "default": "1.309999942779541"
+    },
+    {
+      "name": "angleB",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Scalar",
+      "autoInitObjects": true,
+      "member": "angleB",
+      "mode": "in",
+      "options": {
+        "uiMax": 5,
+        "uiMin": 0.05
+      },
+      "persistence": true,
+      "default": "2.97000002861023"
+    },
+    {
+      "name": "angleC",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Scalar",
+      "autoInitObjects": true,
+      "member": "angleC",
+      "mode": "in",
+      "options": {
+        "uiMax": 5,
+        "uiMin": 0.05
+      },
+      "persistence": true,
+      "default": "6"
+    },
+    {
+      "name": "geo",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "PolygonMesh",
+      "autoInitObjects": true,
+      "member": "geo",
+      "mode": "out",
+      "persistence": false
+    },
+    {
+      "name": "handle",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "DrawingHandle",
+      "autoInitObjects": true,
+      "member": "handle",
+      "mode": "io",
+      "persistence": false
+    },
+    {
+      "name": "moveA",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Vec3",
+      "autoInitObjects": true,
+      "member": "moveA",
+      "mode": "in",
+      "persistence": true,
+      "default": "{\"x\":-0.5,\"y\":0,\"z\":0}"
+    },
+    {
+      "name": "nbSpheres",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Integer",
+      "autoInitObjects": true,
+      "member": "nbSpheres",
+      "mode": "in",
+      "options": {
+        "uiMax": 8,
+        "uiMin": 3
+      },
+      "persistence": true,
+      "default": "5"
+    },
+    {
+      "name": "offsetMat",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Mat44",
+      "autoInitObjects": true,
+      "member": "offsetMat",
+      "mode": "in",
+      "persistence": true,
+      "default": "{\"row0\":{\"x\":0.7570000290870667,\"y\":0.6520000100135803,\"z\":-0.04639999940991402,\"t\":1.240000009536743},\"row1\":{\"x\":-0.02089999988675118,\"y\":-0.04679999873042107,\"z\":-0.9990000128746033,\"t\":0.1159999966621399},\"row2\":{\"x\":-0.6529999971389771,\"y\":0.7570000290870667,\"z\":-0.02180000022053719,\"t\":0},\"row3\":{\"x\":0,\"y\":0,\"z\":0,\"t\":1}}"
+    },
+    {
+      "name": "rootMat",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Mat44",
+      "autoInitObjects": true,
+      "member": "rootMat",
+      "mode": "in",
+      "persistence": true,
+      "default": "{\"row0\":{\"x\":1,\"y\":0,\"z\":0,\"t\":0},\"row1\":{\"x\":0,\"y\":1,\"z\":0,\"t\":1.190000057220459},\"row2\":{\"x\":0,\"y\":0,\"z\":1,\"t\":0},\"row3\":{\"x\":0,\"y\":0,\"z\":0,\"t\":1}}"
+    },
+    {
+      "name": "scaleFactor",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Scalar",
+      "autoInitObjects": true,
+      "member": "scaleFactor",
+      "mode": "in",
+      "options": {
+        "uiMax": 1,
+        "uiMin": 0.75
+      },
+      "persistence": true,
+      "default": "0.8809999823570252"
+    },
+    {
+      "name": "shells",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Integer",
+      "autoInitObjects": true,
+      "member": "shells",
+      "mode": "in",
+      "options": {
+        "uiMax": 25,
+        "uiMin": 3
+      },
+      "persistence": true,
+      "default": "10"
+    },
+    {
+      "name": "spans",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Integer",
+      "autoInitObjects": true,
+      "member": "spans",
+      "mode": "in",
+      "options": {
+        "uiMax": 25,
+        "uiMin": 3
+      },
+      "persistence": true,
+      "default": "6"
+    },
+    {
+      "name": "spans2",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Integer",
+      "autoInitObjects": true,
+      "member": "spans2",
+      "mode": "in",
+      "options": {
+        "uiMax": 25,
+        "uiMin": 3
+      },
+      "persistence": true,
+      "default": "12"
+    },
+    {
+      "name": "thickness",
+      "node": "DGNode",
+      "graph": "procgeo_spheres",
+      "type": "Scalar",
+      "autoInitObjects": true,
+      "member": "thickness",
+      "mode": "in",
+      "options": {
+        "uiMax": 0.25,
+        "uiMin": 0.01
+      },
+      "persistence": true,
+      "default": "0.09399999678134918"
+    }
+  ]
+}
