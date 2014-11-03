@@ -35,7 +35,7 @@ namespace FabricSplice
     void setTime(float time);
     void setWireFrame(bool wireFrame);
     void toggleGrid();
-    void toggleGLFullScreen();
+    void toggleGLFullScreen(int screenIndex = -1);
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
     
     /// returns the real frames per second of this TimeSlider

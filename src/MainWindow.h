@@ -78,6 +78,7 @@ namespace FabricSplice
 
     void displayAsWireFrame();
     void displayAsShaded();
+    void oculusFullScreenMode();
 
   protected:
 

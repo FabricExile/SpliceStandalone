@@ -283,7 +283,7 @@ void GLWidget::resizeGL(int width, int height)
   m_requiresResize = true;
 }
 
-void GLWidget::toggleGLFullScreen()
+void GLWidget::toggleGLFullScreen(int screenIndex)
 {
   if(m_fullScreenDialog)
   {
@@ -317,10 +317,11 @@ void GLWidget::toggleGLFullScreen()
     m_fullScreenDialog->layout()->addWidget(this);
     m_fullScreenDialog->setModal(false);
     m_fullScreenDialog->setWindowFlags(Qt::SplashScreen);
-    m_fullScreenDialog->resize(QApplication::desktop()->width(), QApplication::desktop()->height());
 
-    m_width = QApplication::desktop()->width();
-    m_height = QApplication::desktop()->height();
+    QRect geometry = QApplication::desktop()->screenGeometry(screenIndex);
+    m_width = geometry.width();
+    m_height = geometry.height();
+    m_fullScreenDialog->setGeometry(geometry);
 
     m_requiresInitialize = true;
     m_fullScreenDialog->show();

@@ -162,6 +162,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   menu = menuBar->addMenu("Display");
   connect(action = menu->addAction("Wireframe"), SIGNAL(triggered()), this, SLOT(displayAsWireFrame()));
   connect(action = menu->addAction("Shaded"), SIGNAL(triggered()), this, SLOT(displayAsShaded()));
+  connect(action = menu->addAction("Oculus Full Screen Mode"), SIGNAL(triggered()), this, SLOT(oculusFullScreenMode()));
 
   // windows
   menu = menuBar->addMenu("Window");
@@ -343,6 +344,11 @@ void MainWindow::displayAsWireFrame()
 void MainWindow::displayAsShaded()
 {
   m_glWidget->setWireFrame(false);
+}
+
+void MainWindow::oculusFullScreenMode()
+{
+  m_glWidget->toggleGLFullScreen(1);
 }
 
 void MainWindow::showLogWindow()
