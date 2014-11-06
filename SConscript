@@ -21,8 +21,12 @@ qtDir = os.path.split(QT_INCLUDE_DIR)[0]
 if FABRIC_BUILD_OS != 'Windows':
   qtDir = '/usr'
 
+QT_DEBUG = 0
+if FABRIC_BUILD_TYPE == 'Debug':
+  QT_DEBUG = 1
+
 # create the build environment
-env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
+env = Environment(MSVC_VERSION='12.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', QT_DEBUG = QT_DEBUG, ENV=parentEnv['ENV'])
 if FABRIC_BUILD_OS == 'Linux':
   env.Replace(QT_MOC = '$QT_BINPATH/moc-qt4')
 
