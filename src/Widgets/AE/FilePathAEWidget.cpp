@@ -13,6 +13,8 @@
 #include <QtGui/QSizePolicy>
 #include <QtGui/QFileDialog>
 
+#include <boost/version.hpp>
+
 #include "macros.h"
 #include "utility.h"
 #include "SpliceStandalone.h"

@@ -1,5 +1,6 @@
 #include "SpliceGraphWrapper.h"
 #include "macros.h"
+#include <boost/version.hpp>
 #include <boost/filesystem/path.hpp>
 
 using namespace FabricSplice;
