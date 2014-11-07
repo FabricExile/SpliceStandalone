@@ -23,7 +23,11 @@ SpliceGraphWrapper::SpliceGraphWrapper(const std::string & path) :
 
 std::string SpliceGraphWrapper::name()
 {
-	return boost::filesystem::path(m_path).stem().string();
+#if BOOST_VERSION == 105500
+  return boost::filesystem::path(m_path).stem().string();
+#else
+  return boost::filesystem::path(m_path).stem();
+#endif
 }
 
 void SpliceGraphWrapper::transferParamsToSplice(FabricCore::RTVal params)
