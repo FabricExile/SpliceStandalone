@@ -13,6 +13,8 @@
 #include <QtGui/QSizePolicy>
 #include <QtGui/QFileDialog>
 
+#include <boost/version.hpp>
+
 #include "macros.h"
 #include "utility.h"
 #include "SpliceStandalone.h"
@@ -136,7 +138,11 @@ void FilePathAEWidget::browseClicked()
     boost::filesystem::path path = stdStringFromQString(m_widgets[i]->text());
     std::string directory;
     std::string filter;
+#if BOOST_VERSION == 105500
     if(!path.has_extension())
+#else
+    if(path.extension().empty())
+#endif
     {
       directory = path.string();
       filter = "All files (*.*)";
@@ -144,7 +150,11 @@ void FilePathAEWidget::browseClicked()
     else
     {
       directory = path.parent_path().string();
+#if BOOST_VERSION == 105500
       std::string ext = path.extension().string().substr(1, 1000);
+#else
+      std::string ext = path.extension().substr(1, 1000);
+#endif
       filter = ext + " files (*." + ext + ");;All files (*.*)";
     }
 
