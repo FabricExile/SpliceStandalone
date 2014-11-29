@@ -18,8 +18,10 @@ Import(
   )
 
 qtDir = os.path.split(QT_INCLUDE_DIR)[0]
-if FABRIC_BUILD_OS != 'Windows':
+if FABRIC_BUILD_OS == 'Linux':
   qtDir = '/usr'
+if FABRIC_BUILD_OS == 'Darwin':
+  qtDir = '/usr/local'
 
 QT_DEBUG = 0
 if FABRIC_BUILD_TYPE == 'Debug':
