@@ -130,7 +130,7 @@ for sampleFile in glob.glob(os.path.join(env.Dir('samples').srcnode().abspath, '
   if os.path.isfile(sampleFile):
     standaloneFiles.append(env.Install(samplesDir, env.File(baseName)))
   else:
-    standaloneFiles.append(env.Install(samplesDir.Dir(baseName), env.Glob('samples/%s/*.splice' % baseName)))
+    standaloneFiles.append(env.Install(samplesDir.Dir(baseName), env.Glob('samples/%s/*' % baseName)))
 
 if FABRIC_BUILD_OS == 'Windows':
   qtBinDir = os.path.join(os.path.split(QT_LIB_DIR)[0], 'bin')
