@@ -158,13 +158,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   action->setShortcut(QKeySequence("Alt+F4"));
   action->setShortcutContext(Qt::ApplicationShortcut);
 
-  // manipulation
+  // display
   menu = menuBar->addMenu("Display");
   connect(action = menu->addAction("Wireframe"), SIGNAL(triggered()), this, SLOT(displayAsWireFrame()));
   connect(action = menu->addAction("Shaded"), SIGNAL(triggered()), this, SLOT(displayAsShaded()));
   connect(action = menu->addAction("Oculus Full Screen Mode"), SIGNAL(triggered()), this, SLOT(oculusFullScreenMode()));
 
-  // display
+  // manipulation
   menu = menuBar->addMenu("Manipulation");
   connect(action = menu->addAction("Toggle Manipulation Tool (Q)"), SIGNAL(triggered()), this, SLOT(toggleManipulation()));
 
