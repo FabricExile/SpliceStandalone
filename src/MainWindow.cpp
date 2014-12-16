@@ -164,6 +164,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   connect(action = menu->addAction("Shaded"), SIGNAL(triggered()), this, SLOT(displayAsShaded()));
   connect(action = menu->addAction("Oculus Full Screen Mode"), SIGNAL(triggered()), this, SLOT(oculusFullScreenMode()));
 
+  // manipulation
+  menu = menuBar->addMenu("Manipulation");
+  connect(action = menu->addAction("Toggle Manipulation Tool (Q)"), SIGNAL(triggered()), this, SLOT(toggleManipulation()));
+
   // windows
   menu = menuBar->addMenu("Window");
   connect(action = menu->addAction("Attribute Editor"), SIGNAL(triggered()), this, SLOT(showAttributeEditor()));
