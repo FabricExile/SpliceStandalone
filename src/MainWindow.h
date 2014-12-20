@@ -58,6 +58,7 @@ namespace FabricSplice
     void displayMessage(std::string message);
 
   public slots:
+    
     void updateViews();
 
     void toggleManipulation();
@@ -65,8 +66,11 @@ namespace FabricSplice
     void attributeChanged( QSpliceGraphWrapper wrapper, std::string attributeName );
     void timeChanged(int frame);
     void setGlViewEnabled(bool enable);
-    void updateStatusBar(bool force = false);
-    void setStatusBarText(QString caption);
+
+    void updateFPS();
+
+    void setStatusBarText( QString const &caption );
+    void clearStatusBarText( int timeout );
 
     void showKLEditor();
     void showLogWindow();
@@ -96,9 +100,10 @@ namespace FabricSplice
 
     MainWindowKeyFilter * m_eventFilter;
 
-    QStatusBar * m_statusBar;
-    QString m_statusBarCaption;
-    QTime m_statusBarTimer;
+    QStatusBar *m_statusBar;
+
+    QTimer m_fpsTimer;
+    QLabel *m_fpsLabel;
   };
 };
 

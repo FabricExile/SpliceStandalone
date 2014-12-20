@@ -73,10 +73,6 @@ namespace FabricSplice {
     // the main window 
     MainWindow * m_mainWindow;
 
-    // The slow operations pop-up
-    QProgressDialog m_progressDialog;
-    uint32_t m_progressDepth;
-
     boost::filesystem::path m_fabricPath;
     std::vector<SpliceGraphWrapper::Ptr> m_wrappers;
   };

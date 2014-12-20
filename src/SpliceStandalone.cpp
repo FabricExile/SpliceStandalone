@@ -86,7 +86,6 @@ SpliceStandalone * SpliceStandalone::getInstance()
 
 SpliceStandalone::SpliceStandalone(int &argc, char **argv, boost::filesystem::path fabricDir, std::string spliceFilePath) 
   : QApplication(argc, argv)
-  , m_progressDepth( 0 )
 {
 
   gApplication = this;
@@ -127,15 +126,26 @@ void SpliceStandalone::slowOperation(
   uint32_t descLength
   )
 {
-  if ( descCStr )
+  if ( m_splashScreen )
   {
-    m_progressDialog.setLabelText( descCStr );
-    m_progressDialog.setMaximum( m_progressDialog.maximum() + 1 );
+    if ( descCStr )
+      m_splashScreen->showMessage( descCStr, Qt::AlignHCenter | Qt::AlignBottom );
   }
-  else
+  
+  if ( m_mainWindow )
   {
-    m_progressDialog.setMinimum( m_progressDialog.minimum() + 1 );
-    m_progressDialog.setValue( m_progressDialog.minimum() );
+    if ( descCStr )
+    {
+      QString statusBarMessage;
+      statusBarMessage += "Fabric Core: ";
+      statusBarMessage += descCStr;
+      statusBarMessage += "...";
+      m_mainWindow->setStatusBarText( statusBarMessage );
+    }
+    else
+    {
+      m_mainWindow->clearStatusBarText( 1000 );
+    }
   }
 
   processEvents();
@@ -228,19 +238,6 @@ MainWindow * SpliceStandalone::getMainWindow()
 void SpliceStandalone::constructFabricClient()
 {
   FABRIC_TRY("SpliceStandalone::constructFabricClient",
-
-    m_progressDialog.setWindowFlags(
-      Qt::Dialog
-        | Qt::FramelessWindowHint
-        | Qt::WindowTitleHint
-        | Qt::CustomizeWindowHint
-      );
-    m_progressDialog.setWindowTitle( "Fabirc Core" );
-    m_progressDialog.setMinimumDuration( 500 );
-    m_progressDialog.setValue( 0 );
-    m_progressDialog.setRange( 0, 0 );
-    m_progressDialog.setCancelButton( 0 );
-    m_progressDialog.setWindowModality( Qt::WindowModal );
 
     Logging::setSlowOperationFunc(appSlowOperationFunc);
 
