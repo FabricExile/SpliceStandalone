@@ -33,6 +33,12 @@ void appKLReportFunc(const char * message, unsigned int length)
     gApplication->displayMessage(message);
 }
 
+void appSlowOperationFunc(const char *descCStr, unsigned int descLength)
+{
+  if ( gApplication )
+    gApplication->slowOperation( descCStr, descLength );
+}
+
 void appCompilerErrorFunc(unsigned int row, unsigned int col, const char * file, const char * level, const char * desc)
 {
   printf("%d, %d, %s: %s\n", row, col, file, desc);
@@ -90,17 +96,10 @@ SpliceStandalone::SpliceStandalone(int &argc, char **argv, boost::filesystem::pa
   QPixmap pixmap((m_fabricPath / "Resources" / "splice_splash.jpg").string().c_str());
   m_splashScreen = new QSplashScreen(pixmap);
   m_splashScreen->show();
-  
+
   Initialize(); 
 
   constructFabricClient();
-
-  Logging::setLogFunc(appLogFunc);
-  Logging::setLogErrorFunc(appLogErrorFunc);
-  Logging::setKLReportFunc(appKLReportFunc);
-
-  Logging::setCompilerErrorFunc(appCompilerErrorFunc);
-  Logging::setKLStatusFunc(appKLStatusFunc);
 
   if(spliceFilePath.length())
     addWrapper(spliceFilePath);
@@ -120,6 +119,36 @@ void SpliceStandalone::displayMessage(std::string message)
   {
     m_mainWindow->displayMessage(message+"\n");
   }
+}
+
+void SpliceStandalone::slowOperation(
+  char const *descCStr,
+  uint32_t descLength
+  )
+{
+  if ( m_splashScreen )
+  {
+    if ( descCStr )
+      m_splashScreen->showMessage( descCStr, Qt::AlignHCenter | Qt::AlignBottom );
+  }
+  
+  if ( m_mainWindow )
+  {
+    if ( descCStr )
+    {
+      QString statusBarMessage;
+      statusBarMessage += "Fabric Core: ";
+      statusBarMessage += descCStr;
+      statusBarMessage += "...";
+      m_mainWindow->setStatusBarText( statusBarMessage );
+    }
+    else
+    {
+      m_mainWindow->clearStatusBarText( 1000 );
+    }
+  }
+
+  processEvents();
 }
 
 // dispatch a message to the status bar
@@ -210,7 +239,16 @@ void SpliceStandalone::constructFabricClient()
 {
   FABRIC_TRY("SpliceStandalone::constructFabricClient",
 
+    Logging::setSlowOperationFunc(appSlowOperationFunc);
+
     FabricCore::Client client = ConstructClient();
+
+    Logging::setLogFunc(appLogFunc);
+    Logging::setLogErrorFunc(appLogErrorFunc);
+    Logging::setKLReportFunc(appKLReportFunc);
+
+    Logging::setCompilerErrorFunc(appCompilerErrorFunc);
+    Logging::setKLStatusFunc(appKLStatusFunc);
 
     client.loadExtension("Animation", "", false);
     client.loadExtension("InlineDrawing", "", false);
@@ -270,4 +308,3 @@ void SpliceStandalone::setupFusionLook()
   // qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
 }
-

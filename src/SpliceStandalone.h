@@ -52,6 +52,9 @@ namespace FabricSplice {
     // dispatch a message to the status bar
     void setStatusBarText(std::string caption);
 
+    // something maybe slow is happening
+    void slowOperation( char const *descCStr, uint32_t descLength );
+
     // access to the application's path
     boost::filesystem::path getFabricPath() const { return m_fabricPath; }
 

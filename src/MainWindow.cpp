@@ -141,8 +141,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   installEventFilter(m_eventFilter);
 
   // status bar
-  m_statusBarTimer.start();
+  m_fpsTimer.setInterval( 1000 );
+  connect( &m_fpsTimer, SIGNAL(timeout()), this, SLOT(updateFPS()) );
+  m_fpsTimer.start();
+
   m_statusBar = new QStatusBar(this);
+  m_fpsLabel = new QLabel( m_statusBar );
+  m_statusBar->addPermanentWidget( m_fpsLabel );
   setStatusBar(m_statusBar);
   m_statusBar->show();
 
@@ -259,20 +264,28 @@ void MainWindow::timeChanged(int frame)
   m_glWidget->setTime(float(frame) / 24.0);
 }
 
-void MainWindow::updateStatusBar(bool force)
+void MainWindow::updateFPS()
 {
-  if(m_statusBarTimer.elapsed() < 1000 && !force)
-    return;
   QString caption;
   caption.setNum(m_glWidget->fps(), 'f', 2);
-  m_statusBar->showMessage(caption+" FPS "+m_statusBarCaption);
-  m_statusBarTimer.start();
+  caption += " FPS";
+  m_fpsLabel->setText( caption );
 }
 
-void MainWindow::setStatusBarText(QString caption)
+void MainWindow::setStatusBarText(QString const &caption)
 {
-  m_statusBarCaption = caption;
-  updateStatusBar(true);;  
+  m_statusBar->showMessage( caption );
+}
+
+void MainWindow::clearStatusBarText( int afterMS )
+{
+  if ( afterMS > 0 )
+    m_statusBar->showMessage(
+      m_statusBar->currentMessage(),
+      afterMS
+      );
+  else
+    m_statusBar->clearMessage();
 }
 
 void MainWindow::showAttributeEditor()
