@@ -124,8 +124,8 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
 /////////////////////////////////////////////////////////////////////////////////
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
-	QMainWindow(parent, flags)
-
+	QMainWindow(parent, flags),
+  m_glWidget( 0 )
 {
   SpliceStandalone* app = SpliceStandalone::getInstance();
   boost::filesystem::path resourcesDir = app->getFabricPath() / "Resources";
@@ -263,9 +263,16 @@ void MainWindow::updateStatusBar(bool force)
 {
   if(m_statusBarTimer.elapsed() < 1000 && !force)
     return;
+
   QString caption;
-  caption.setNum(m_glWidget->fps(), 'f', 2);
-  m_statusBar->showMessage(caption+" FPS "+m_statusBarCaption);
+  if ( m_glWidget )
+  {
+    caption.setNum(m_glWidget->fps(), 'f', 2);
+    caption += " FPS ";
+  }
+  caption += m_statusBarCaption;
+  m_statusBar->showMessage(caption);
+
   m_statusBarTimer.start();
 }
 
