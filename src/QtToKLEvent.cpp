@@ -4,7 +4,6 @@
 #include <QtGui/QWheelEvent>
 
 #include <FabricSplice.h>
-#include "macros.h"
 
 #include <map>
 #include <iostream>

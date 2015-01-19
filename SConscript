@@ -73,7 +73,7 @@ env.MergeFlags(qtFlags)
 env.MergeFlags(sharedCapiFlags)
 env.MergeFlags(spliceFlags)
 
-env.Append(CPPPATH = [env.Dir('src')])
+env.Append(CPPPATH = [env.Dir('src').srcnode().abspath])
 
 def GlobRecursive(self, pattern, useBuildDir = False):
   (folder, file) = os.path.split(pattern)
