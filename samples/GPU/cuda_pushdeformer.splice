@@ -32,7 +32,7 @@
       "type": "PolygonMesh",
       "autoInitObjects": true,
       "member": "geo",
-      "mode": "io",
+      "mode": "in",
       "persistence": false
     },
     {
