@@ -49,11 +49,11 @@ namespace FabricSplice {
     // dispatch a message to the log window 
     void displayMessage(std::string message);
 
+    // dispatch a message to the log window 
+    void slowOperation(const char *descCStr, unsigned int descLength);
+
     // dispatch a message to the status bar
     void setStatusBarText(std::string caption);
-
-    // something maybe slow is happening
-    void slowOperation( char const *descCStr, uint32_t descLength );
 
     // access to the application's path
     boost::filesystem::path getFabricPath() const { return m_fabricPath; }
@@ -62,6 +62,29 @@ namespace FabricSplice {
     QFont getWidgetFont();
 
     static SpliceStandalone * getInstance();
+
+    class SlowOperationEvent : public QEvent
+    {
+    public:
+
+      SlowOperationEvent(
+        QEvent::Type eventType,
+        char const *descCStr,
+        uint32_t descLen
+        )
+        : QEvent( eventType )
+        , m_desc( descCStr )
+      {
+      }
+
+      QString const &getDesc() const { return m_desc; }
+
+    private:
+
+      QString m_desc;
+    };
+
+    virtual bool event( QEvent *e );
 
   private:
 
@@ -75,6 +98,8 @@ namespace FabricSplice {
 
     boost::filesystem::path m_fabricPath;
     std::vector<SpliceGraphWrapper::Ptr> m_wrappers;
+
+    static QEvent::Type s_eventType;
   };
 
   // global accessor for all fonts

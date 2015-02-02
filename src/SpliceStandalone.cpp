@@ -122,33 +122,54 @@ void SpliceStandalone::displayMessage(std::string message)
 }
 
 void SpliceStandalone::slowOperation(
-  char const *descCStr,
+  char const *descCString,
   uint32_t descLength
   )
 {
-  if ( m_splashScreen )
-  {
-    if ( descCStr )
-      m_splashScreen->showMessage( descCStr, Qt::AlignHCenter | Qt::AlignBottom );
-  }
-  
-  if ( m_mainWindow )
-  {
-    if ( descCStr )
-    {
-      QString statusBarMessage;
-      statusBarMessage += "Fabric Core: ";
-      statusBarMessage += descCStr;
-      statusBarMessage += "...";
-      m_mainWindow->setStatusBarText( statusBarMessage );
-    }
-    else
-    {
-      m_mainWindow->clearStatusBarText( 1000 );
-    }
-  }
+  if ( s_eventType == QEvent::None )
+    s_eventType = QEvent::Type( QEvent::registerEventType() );
+
+  postEvent( this, new SlowOperationEvent(
+    s_eventType, descCString, descLength
+    ) );
 
   processEvents();
+}
+
+bool SpliceStandalone::event( QEvent *e )
+{
+  if ( e->type() == s_eventType )
+  {
+    SlowOperationEvent *slowOperationEvent =
+      static_cast<SlowOperationEvent *>( e );
+    QString const &desc = slowOperationEvent->getDesc();
+
+    if ( m_splashScreen )
+    {
+      if ( !desc.isEmpty() )
+        m_splashScreen->showMessage( desc, Qt::AlignHCenter | Qt::AlignBottom );
+    }
+    
+    if ( m_mainWindow )
+    {
+      if ( !desc.isEmpty() )
+      {
+        QString statusBarMessage;
+        statusBarMessage += "Fabric Core: ";
+        statusBarMessage += desc;
+        statusBarMessage += "...";
+        m_mainWindow->setStatusBarText( statusBarMessage );
+      }
+      else
+      {
+        m_mainWindow->clearStatusBarText( 1000 );
+      }
+    }
+
+    return true;
+  }
+
+  return QApplication::event( e );
 }
 
 // dispatch a message to the status bar
@@ -308,3 +329,5 @@ void SpliceStandalone::setupFusionLook()
   // qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
 }
+
+QEvent::Type SpliceStandalone::s_eventType = QEvent::None;
