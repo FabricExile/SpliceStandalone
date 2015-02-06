@@ -21,6 +21,8 @@ namespace FabricSplice {
   {
     Q_OBJECT
 
+    friend class SlowOperationCallback;
+
   public:
 
     SpliceStandalone(int &argc, char **argv, boost::filesystem::path fabricDir, std::string spliceFilePath = "");
@@ -63,32 +65,15 @@ namespace FabricSplice {
 
     static SpliceStandalone * getInstance();
 
-    class SlowOperationEvent : public QEvent
-    {
-    public:
+  signals:
 
-      SlowOperationEvent(
-        QEvent::Type eventType,
-        char const *descCStr,
-        uint32_t descLen
-        )
-        : QEvent( eventType )
-        , m_desc( descCStr )
-      {
-      }
-
-      QString const &getDesc() const { return m_desc; }
-
-    private:
-
-      QString m_desc;
-    };
-
-    virtual bool event( QEvent *e );
+    void slowOperationDescChanged( char const *descCStr );
 
   private:
 
     void constructFabricClient();
+
+    QThread *m_slowOperationThread;
 
     // the splash screen
     QSplashScreen * m_splashScreen;
@@ -98,8 +83,6 @@ namespace FabricSplice {
 
     boost::filesystem::path m_fabricPath;
     std::vector<SpliceGraphWrapper::Ptr> m_wrappers;
-
-    static QEvent::Type s_eventType;
   };
 
   // global accessor for all fonts

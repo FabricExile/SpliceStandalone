@@ -6,6 +6,7 @@
 #include <FabricSplice.h>
 #include <FabricCore.h>
 
+#include "SpliceSlowOperationDialog.h"
 #include "macros.h"
 
 using namespace FabricSplice;
@@ -93,9 +94,21 @@ SpliceStandalone::SpliceStandalone(int &argc, char **argv, boost::filesystem::pa
   m_mainWindow = NULL;
   m_fabricPath = fabricDir;
 
+  m_slowOperationThread = new QThread( this );
+
   QPixmap pixmap((m_fabricPath / "Resources" / "splice_splash.jpg").string().c_str());
-  m_splashScreen = new QSplashScreen(pixmap);
+  m_splashScreen = new QSplashScreen( pixmap );
   m_splashScreen->show();
+
+  SpliceSlowOperationDialog *slowOperationDialog
+    = new SpliceSlowOperationDialog( m_splashScreen );
+  slowOperationDialog->moveToThread( m_slowOperationThread );
+  connect(
+    this, SIGNAL(slowOperationDescChanged( char const * )),
+    slowOperationDialog, SLOT(display( char const * ))
+    );
+
+  m_slowOperationThread->start();
 
   Initialize(); 
 
@@ -107,6 +120,7 @@ SpliceStandalone::SpliceStandalone(int &argc, char **argv, boost::filesystem::pa
 
 SpliceStandalone::~SpliceStandalone()
 {
+  m_slowOperationThread->quit();
   gApplication = NULL;
   DestroyClient();
   Finalize();
@@ -126,50 +140,8 @@ void SpliceStandalone::slowOperation(
   uint32_t descLength
   )
 {
-  if ( s_eventType == QEvent::None )
-    s_eventType = QEvent::Type( QEvent::registerEventType() );
-
-  postEvent( this, new SlowOperationEvent(
-    s_eventType, descCString, descLength
-    ) );
-
-  processEvents();
-}
-
-bool SpliceStandalone::event( QEvent *e )
-{
-  if ( e->type() == s_eventType )
-  {
-    SlowOperationEvent *slowOperationEvent =
-      static_cast<SlowOperationEvent *>( e );
-    QString const &desc = slowOperationEvent->getDesc();
-
-    if ( m_splashScreen )
-    {
-      if ( !desc.isEmpty() )
-        m_splashScreen->showMessage( desc, Qt::AlignHCenter | Qt::AlignBottom );
-    }
-    
-    if ( m_mainWindow )
-    {
-      if ( !desc.isEmpty() )
-      {
-        QString statusBarMessage;
-        statusBarMessage += "Fabric Core: ";
-        statusBarMessage += desc;
-        statusBarMessage += "...";
-        m_mainWindow->setStatusBarText( statusBarMessage );
-      }
-      else
-      {
-        m_mainWindow->clearStatusBarText( 1000 );
-      }
-    }
-
-    return true;
-  }
-
-  return QApplication::event( e );
+  fprintf( stderr, "MT %s\n", descCString );
+  emit slowOperationDescChanged( descCString );
 }
 
 // dispatch a message to the status bar
@@ -187,14 +159,14 @@ SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & spliceP
   if(m_mainWindow)
     m_mainWindow->setGlViewEnabled(false);
 
-  if(m_splashScreen)
+  if ( m_splashScreen )
   {
-    m_splashScreen->finish(m_mainWindow);
+    m_splashScreen->close();
     m_splashScreen = NULL;
   }
 
   QPixmap pixmap((m_fabricPath / "Resources" / "splice_loading.jpg").string().c_str());
-  m_splashScreen = new QSplashScreen(pixmap);
+  m_splashScreen = new QSplashScreen( pixmap );
   m_splashScreen->show();
 
   SpliceGraphWrapper::Ptr wrapper = SpliceGraphWrapper::Ptr(new SpliceGraphWrapper(splicePath));
@@ -211,7 +183,7 @@ SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & spliceP
 
   if(m_splashScreen)
   {
-    m_splashScreen->finish(m_mainWindow);
+    m_splashScreen->close();
     m_splashScreen = NULL;
   }
 
@@ -246,9 +218,17 @@ void SpliceStandalone::showMainWindow()
 
   if(m_splashScreen)
   {
-    m_splashScreen->finish(m_mainWindow);
+    m_splashScreen->close();
     m_splashScreen = NULL;
   }
+
+  SpliceSlowOperationDialog *slowOperationDialog
+    = new SpliceSlowOperationDialog( m_mainWindow );
+  slowOperationDialog->moveToThread( m_slowOperationThread );
+  connect(
+    this, SIGNAL(slowOperationDescChanged( char const * )),
+    slowOperationDialog, SLOT(display( char const * ))
+    );
 }
 
 MainWindow * SpliceStandalone::getMainWindow()
@@ -329,5 +309,3 @@ void SpliceStandalone::setupFusionLook()
   // qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
 }
-
-QEvent::Type SpliceStandalone::s_eventType = QEvent::None;
