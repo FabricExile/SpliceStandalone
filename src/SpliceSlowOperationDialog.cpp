@@ -1,5 +1,6 @@
 #include "SpliceSlowOperationDialog.h"
 
+#include <QtCore/QTimer>
 #include <QtGui/QHBoxLayout>
 
 namespace FabricSplice
@@ -21,8 +22,17 @@ namespace FabricSplice
   void SpliceSlowOperationDialog::display( char const *descCStr )
   {
     // fprintf( stderr, "ST %s\n", descCStr );
-    m_label->setText( descCStr );
+
+    QString desc;
     if ( descCStr && *descCStr )
+    {
+      desc += "Fabric Core: ";
+      desc += descCStr;
+      desc += "...";
+    }
+    m_label->setText( desc );
+
+    if ( !desc.isEmpty() )
       show();
     else
       hide();
