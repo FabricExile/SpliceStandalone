@@ -20,7 +20,7 @@ namespace FabricSplice
 
   void SpliceSlowOperationDialog::display( char const *descCStr )
   {
-    fprintf( stderr, "ST %s\n", descCStr );
+    // fprintf( stderr, "ST %s\n", descCStr );
     m_label->setText( descCStr );
     if ( descCStr && *descCStr )
       show();

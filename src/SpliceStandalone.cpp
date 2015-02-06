@@ -140,7 +140,7 @@ void SpliceStandalone::slowOperation(
   uint32_t descLength
   )
 {
-  fprintf( stderr, "MT %s\n", descCString );
+  // fprintf( stderr, "MT %s\n", descCString );
   emit slowOperationDescChanged( descCString );
 }
 
