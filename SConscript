@@ -29,8 +29,8 @@ env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_L
 if FABRIC_BUILD_OS == 'Linux':
   env.Replace(QT_MOC = '$QT_BINPATH/moc-qt4')
   if FABRIC_BUILD_DIST == 'CentOS':
-    env.Append(CC = parentEnv['CC'])
-    env.Append(CXX = parentEnv['CXX'])
+    env.Replace(CC = parentEnv['CC'])
+    env.Replace(CXX = parentEnv['CXX'])
 env.Append(CCFLAGS = parentEnv['CCFLAGS'])
 env.Append(LINKFLAGS = parentEnv['LINKFLAGS'])
 env.Append(CPPDEFINES = parentEnv['CPPDEFINES'])
