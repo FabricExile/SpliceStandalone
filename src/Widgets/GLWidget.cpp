@@ -22,15 +22,37 @@
 
 #include "macros.h"
 #include "QtToKLEvent.h"
+#include "SpliceStandalone.h"
 
 using namespace FabricSplice;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  GLThread
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+GLThread::GLThread( GLWidget *glWidget )
+  : m_glWidget( glWidget )
+{
+}
+
+void GLThread::resizeViewport( QSize const &size )
+{
+}
+
+void GLThread::run()
+{
+  while ( true )
+    m_glWidget->paintFromGLThread();
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  GLWidget
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
-	QGLWidget(format, parent)
+	QGLWidget(format, parent),
+  m_glThread( this ),
+  m_frame( 0 )
 {	
   setAutoBufferSwap(false);
 
@@ -54,12 +76,18 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
   m_width = 0;
   m_height = 0;
 
+  m_glThread.start();
 }
 
 GLWidget::~GLWidget()
 {
   if(m_fullScreenDialog)
     delete(m_fullScreenDialog);
+}
+
+void GLWidget::paintEvent( QPaintEvent *e )
+{
+  // Handled by GLThread
 }
 
 void GLWidget::resetRTVals()
@@ -100,6 +128,7 @@ void GLWidget::resetRTVals()
       return;
     }
 
+    m_timeRTVal = m_drawContext.maybeGetMemberRef( "time" );
   );
 
   m_requiresInitialize = true;
@@ -112,12 +141,18 @@ FabricCore::RTVal GLWidget::getInlineViewport()
   return m_viewport;
 }
 
-void GLWidget::paintGL()
+void GLWidget::paintFromGLThread()
 {
-  if(!m_redrawEnabled)
-    return;
-  if(m_painting)
-    return;
+  ++m_frame;
+
+  SpliceStandalone* app = SpliceStandalone::getInstance();
+  const std::vector<SpliceGraphWrapper::Ptr> & wrappers = app->wrappers();
+  for(size_t i=0;i<wrappers.size();i++)
+    wrappers[i]->setFrame(m_frame);
+
+  m_timeRTVal.setFloat32( m_frame / 24.0f );
+
+  makeCurrent();
 
   // compute the fps
   double ms = m_fpsTimer.elapsed();
@@ -180,12 +215,18 @@ void GLWidget::paintGL()
     responsibleForSwappingBuffers = responsibleForSwappingBuffersVal.getBoolean();
   );
 
-  if(!responsibleForSwappingBuffers)
+  // if(!responsibleForSwappingBuffers)
     swapBuffers();
 
-  emit redrawn();
+  // emit redrawn();
 
   m_painting = false;
+}
+
+float GLWidget::getTime() const
+{
+  FabricCore::RTVal timeVal = m_drawContext.maybeGetMember("time");
+  return timeVal.getFloat32();
 }
 
 void GLWidget::setTime(float time)
@@ -196,7 +237,6 @@ void GLWidget::setTime(float time)
     m_drawContext.setMember("time", timeVal);
 
   );
-  updateGL();
 }
 
 

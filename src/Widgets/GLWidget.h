@@ -16,9 +16,26 @@
 
 namespace FabricSplice
 {
+  class GLWidget;
+
+  class GLThread : public QThread
+  {
+  public:
+
+    GLThread( GLWidget *glWidget );
+    void resizeViewport( QSize const &size );
+    void run();
+
+  private:
+
+    GLWidget *m_glWidget;
+  };
+
   class GLWidget : public QGLWidget
   {
   	Q_OBJECT
+
+    friend class GLThread;
 
   public:
 
@@ -32,6 +49,7 @@ namespace FabricSplice
 
     void enableRedraw(bool enable = true) { m_redrawEnabled = enable; }
     bool isRedrawEnabled() { return m_redrawEnabled; }
+    float getTime() const;
     void setTime(float time);
     void setWireFrame(bool wireFrame);
     void toggleGrid();
@@ -49,22 +67,29 @@ namespace FabricSplice
 
     virtual void initializeGL();
     virtual void resizeGL(int w, int h);
-    virtual void paintGL();
 
+    void paintFromGLThread();
+
+    void paintEvent( QPaintEvent *e );
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
+
+    GLThread m_glThread;
 
     FabricCore::RTVal m_drawing;
     FabricCore::RTVal m_camera;
     FabricCore::RTVal m_cameraManipulator;
     FabricCore::RTVal m_viewport;
     FabricCore::RTVal m_drawContext;
+    FabricCore::RTVal m_timeRTVal;
 
     bool m_requiresInitialize;
     bool m_requiresResize;
     bool m_resizeEnabled;
+
+    int volatile m_frame;
 
     QTime m_fpsTimer;
     double m_fps;
