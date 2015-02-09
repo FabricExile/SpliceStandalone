@@ -71,11 +71,7 @@ int main(int argc, char *argv[])
   }
   fclose(f);
 
-	SpliceStandalone app(argc, argv, appDir);
-	app.showMainWindow();
-	app.setupFusionLook();
-  app.processEvents();
-  app.addWrapper(spliceFilePath);
+	SpliceStandalone app(argc, argv, appDir, spliceFilePath);
 
 	// Blocks until application decides to quit.
 	app.exec();
