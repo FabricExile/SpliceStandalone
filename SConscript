@@ -107,16 +107,18 @@ sources += env.Glob('src/Widgets/AE/*.cpp')
 
 target = 'splice'
 
+samplesDir = STAGE_DIR.Dir('Samples').Dir('SpliceStandalone')
+binDir = STAGE_DIR.Dir('bin')
+libDir = STAGE_DIR.Dir('lib')
+
 if FABRIC_BUILD_OS == 'Linux':
   env.Append(LINKFLAGS = [Literal('-Wl,-rpath,$ORIGIN/../lib')])
+  env.Append(LINKFLAGS = [Literal('-Wl,-rpath-link,' + str(libDir))])
   env['_LIBFLAGS' ] = '-Wl,--start-group ' + env['_LIBFLAGS'] + ' -Wl,--end-group'
 if FABRIC_BUILD_OS == 'Windows':
   env.Append(LINKFLAGS = ['/STACK:67108864'])
 if FABRIC_BUILD_OS == 'Darwin':
   env.Append(LINKFLAGS = ['-Wl,-rpath,@loader_path/..'])
-
-samplesDir = STAGE_DIR.Dir('Samples').Dir('SpliceStandalone')
-binDir = STAGE_DIR.Dir('bin')
 
 standaloneFiles = []
 if FABRIC_BUILD_OS == 'Windows':
