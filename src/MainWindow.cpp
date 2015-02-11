@@ -229,8 +229,6 @@ void MainWindow::initialize()
 
 	m_glWidget->show();
 
-  connect( m_glWidget, SIGNAL(redrawn()) , this, SLOT(updateStatusBar()) );
-
 	m_glWidget->updateGL();
 
 	m_manipulatorContext = new ManipulationTool(m_glWidget);
