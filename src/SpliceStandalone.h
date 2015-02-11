@@ -70,6 +70,7 @@ namespace FabricSplice {
     void slowOperation( QString desc );
 
     void fabricClientConstructed();
+    void wrapperLoaded( SpliceGraphWrapper::Ptr wrapper );
 
   signals:
 
@@ -105,6 +106,33 @@ namespace FabricSplice {
   signals:
 
     void finished();
+  };
+
+  class WrapperLoader : public QObject
+  {
+    Q_OBJECT
+    
+  public:
+
+    WrapperLoader( std::string const &splicePath, MainWindow *mainWindow )
+      : m_splicePath( splicePath )
+      , m_mainWindow( mainWindow )
+    {
+    }
+
+  public slots:
+
+    void process();
+
+  signals:
+
+    void wrapperLoaded( SpliceGraphWrapper::Ptr );
+    void finished();
+
+  private:
+
+    std::string m_splicePath;
+    MainWindow *m_mainWindow;
   };
 
   // global accessor for all fonts

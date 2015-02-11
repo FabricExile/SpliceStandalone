@@ -203,6 +203,26 @@ void FabricClientConstructor::process()
   emit finished();
 }
 
+void WrapperLoader::process()
+{
+  m_mainWindow->makeGLCurrent();
+
+  SpliceGraphWrapper::Ptr wrapper =
+    SpliceGraphWrapper::Ptr( new SpliceGraphWrapper(m_splicePath) );
+
+  // setup the evaluation context
+  FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
+  context.setMember("host",
+    FabricSplice::constructStringRTVal("Splice Standalone"));
+  context.setMember("graph",
+    FabricSplice::constructStringRTVal(m_splicePath.c_str()));
+  context.setMember("currentFilePath",
+    FabricSplice::constructStringRTVal(m_splicePath.c_str()));
+
+  emit wrapperLoaded( wrapper );
+  emit finished();
+}
+
 void SpliceStandalone::fabricClientConstructed()
 {
   m_mainWindow->setGlViewEnabled(false);
@@ -219,24 +239,19 @@ void SpliceStandalone::fabricClientConstructed()
     m_splashScreen = new QSplashScreen( pixmap );
     m_splashScreen->show();
 
-    SpliceGraphWrapper::Ptr wrapper =
-      SpliceGraphWrapper::Ptr( new SpliceGraphWrapper(m_spliceFilePath) );
-
-    // setup the evaluation context
-    FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
-    context.setMember("host",
-      FabricSplice::constructStringRTVal("Splice Standalone"));
-    context.setMember("graph",
-      FabricSplice::constructStringRTVal(m_spliceFilePath.c_str()));
-    context.setMember("currentFilePath",
-      FabricSplice::constructStringRTVal(m_spliceFilePath.c_str()));
-
-    m_wrappers.push_back( wrapper );
-
-    showMainWindow();
-
-    m_mainWindow->setGlViewEnabled(true);
-    m_mainWindow->redraw();
+    QThread* thread = new QThread;
+    WrapperLoader* worker =
+      new WrapperLoader( m_spliceFilePath, m_mainWindow );
+    worker->moveToThread(thread);
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(
+      worker, SIGNAL(wrapperLoaded(SpliceGraphWrapper::Ptr)),
+      this, SLOT(wrapperLoaded(SpliceGraphWrapper::Ptr))
+      );
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
   }
 }
 
@@ -251,6 +266,19 @@ void SpliceStandalone::constructFabricClient()
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   connect(thread, SIGNAL(finished()), this, SLOT(fabricClientConstructed()));
   thread->start();
+}
+
+void SpliceStandalone::wrapperLoaded( SpliceGraphWrapper::Ptr wrapper )
+{
+  m_wrappers.push_back( wrapper );
+
+  showMainWindow();
+
+  if(m_mainWindow)
+  {
+    m_mainWindow->setGlViewEnabled(true);
+    m_mainWindow->redraw();
+  }
 }
 
 // this will make sure the main window is created and then raise it
