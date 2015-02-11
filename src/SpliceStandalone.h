@@ -62,6 +62,8 @@ namespace FabricSplice {
 
     static SpliceStandalone * getInstance();
 
+    void emitSlowOperationDescChanged( char const *descCStr );
+
   public slots:
 
     // dispatch a message to the log window 
@@ -72,7 +74,7 @@ namespace FabricSplice {
 
   signals:
 
-    void slowOperationDescChanged( char const *descCStr );
+    void slowOperationDescChanged( QString desc );
 
   private:
 

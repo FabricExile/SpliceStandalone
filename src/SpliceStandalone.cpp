@@ -36,7 +36,7 @@ void appKLReportFunc(const char * message, unsigned int length)
 void appSlowOperationFunc(const char *descCStr, unsigned int descLength)
 {
   if ( gApplication )
-    gApplication->slowOperation( QString( descCStr ) );
+    gApplication->emitSlowOperationDescChanged( descCStr );
 }
 
 void appCompilerErrorFunc(unsigned int row, unsigned int col, const char * file, const char * level, const char * desc)
@@ -99,6 +99,8 @@ SpliceStandalone::SpliceStandalone(
   m_fabricPath = fabricDir;
   m_spliceFilePath = spliceFilePath;
 
+  connect(this, SIGNAL(slowOperationDescChanged(QString)), this, SLOT(slowOperation(QString)));
+
   QPixmap pixmap((m_fabricPath / "Resources" / "splice_splash.jpg").string().c_str());
   m_splashScreen = new QSplashScreen( pixmap );
   m_splashScreen->show();
@@ -124,6 +126,11 @@ void SpliceStandalone::displayMessage(std::string message)
   {
     m_mainWindow->displayMessage(message+"\n");
   }
+}
+
+void SpliceStandalone::emitSlowOperationDescChanged( char const *descCStr )
+{
+  emit slowOperationDescChanged( QString( descCStr ) );
 }
 
 void SpliceStandalone::slowOperation( QString desc )
@@ -216,8 +223,6 @@ void WrapperLoader::process()
 
 void SpliceStandalone::fabricClientConstructed()
 {
-  fprintf( stderr, "fabricClientConstructed\n" );
-
   if ( m_mainWindow )
     m_mainWindow->setGlViewEnabled(false);
 
