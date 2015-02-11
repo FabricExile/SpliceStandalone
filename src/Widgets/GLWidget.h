@@ -25,6 +25,8 @@ namespace FabricSplice
   	GLWidget(QGLFormat format, QWidget *parent = NULL);
   	virtual ~GLWidget();
 
+    void initialize();
+
   	FabricCore::RTVal getInlineViewport();
     bool manipulateCamera(QEvent *event);
 

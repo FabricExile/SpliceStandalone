@@ -53,9 +53,16 @@ namespace FabricSplice
     MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = Qt::CustomizeWindowHint );
     ~MainWindow() {};
 
+    void initialize();
+
     // make sure the widgetRedraw;
     void redraw();
     void displayMessage(std::string message);
+
+    void makeGLCurrent()
+    {
+      m_glWidget->makeCurrent();
+    }
 
   public slots:
     

@@ -95,7 +95,9 @@ SpliceStandalone::SpliceStandalone(
 
   gApplication = this;
 
-  m_mainWindow = NULL;
+  Qt::WindowFlags flags = 0;
+  m_mainWindow = new MainWindow(0,flags);
+
   m_fabricPath = fabricDir;
   m_spliceFilePath = spliceFilePath;
 
@@ -161,9 +163,7 @@ QFont SpliceStandalone::getWidgetFont()
 // this will make sure the main window is created and then raise it
 void SpliceStandalone::showMainWindow()
 {
-  Qt::WindowFlags flags = 0;
-  m_mainWindow = new MainWindow(0,flags);
-
+  m_mainWindow->initialize();
   m_mainWindow->resize(1600,1000);
   m_mainWindow->showMaximized();
   m_mainWindow->raise();
@@ -205,6 +205,8 @@ void FabricClientConstructor::process()
 
 void WrapperLoader::process()
 {
+  m_mainWindow->makeGLCurrent();
+
   SpliceGraphWrapper::Ptr wrapper =
     SpliceGraphWrapper::Ptr( new SpliceGraphWrapper(m_splicePath) );
 
@@ -223,8 +225,7 @@ void WrapperLoader::process()
 
 void SpliceStandalone::fabricClientConstructed()
 {
-  if ( m_mainWindow )
-    m_mainWindow->setGlViewEnabled(false);
+  m_mainWindow->setGlViewEnabled(false);
 
   if ( m_splashScreen )
   {
@@ -239,7 +240,8 @@ void SpliceStandalone::fabricClientConstructed()
     m_splashScreen->show();
 
     QThread* thread = new QThread;
-    WrapperLoader* worker = new WrapperLoader( m_spliceFilePath );
+    WrapperLoader* worker =
+      new WrapperLoader( m_spliceFilePath, m_mainWindow );
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
     connect(

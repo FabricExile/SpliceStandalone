@@ -114,8 +114,11 @@ namespace FabricSplice {
     
   public:
 
-    WrapperLoader( std::string const &splicePath )
-      : m_splicePath( splicePath ) {}
+    WrapperLoader( std::string const &splicePath, MainWindow *mainWindow )
+      : m_splicePath( splicePath )
+      , m_mainWindow( mainWindow )
+    {
+    }
 
   public slots:
 
@@ -129,6 +132,7 @@ namespace FabricSplice {
   private:
 
     std::string m_splicePath;
+    MainWindow *m_mainWindow;
   };
 
   // global accessor for all fonts

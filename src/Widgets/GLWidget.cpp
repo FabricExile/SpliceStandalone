@@ -39,8 +39,6 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent) :
   for(int i=0;i<16;i++)
     m_fpsStack[i] = 0.0;
 
-  m_fpsTimer.start();
-  resetRTVals();
 	setFocusPolicy(Qt::StrongFocus);
 
   m_redrawEnabled = false;
@@ -60,6 +58,12 @@ GLWidget::~GLWidget()
 {
   if(m_fullScreenDialog)
     delete(m_fullScreenDialog);
+}
+
+void GLWidget::initialize()
+{
+  m_fpsTimer.start();
+  resetRTVals();
 }
 
 void GLWidget::resetRTVals()

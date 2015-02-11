@@ -213,12 +213,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
 
   QWidget * glParentWidget = new QWidget(this);
   glParentWidget->setLayout(new QVBoxLayout());
+
 	m_glWidget = new GLWidget(glFormat, glParentWidget);
   glParentWidget->layout()->addWidget(m_glWidget);
   glParentWidget->layout()->setContentsMargins(0, 0, 0, 0);
-	m_glWidget->makeCurrent();
+  m_glWidget->makeCurrent();
   m_glWidget->installEventFilter(m_eventFilter);
-	setCentralWidget(glParentWidget);
+  setCentralWidget(glParentWidget);
+}
+
+void MainWindow::initialize()
+{
+  m_glWidget->initialize();
+  m_glWidget->makeCurrent();
 
 	m_glWidget->show();
 
