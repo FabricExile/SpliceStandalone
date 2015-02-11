@@ -212,8 +212,6 @@ void WrapperLoader::process()
 
 void SpliceStandalone::fabricClientConstructed()
 {
-  m_mainWindow->setGlViewEnabled(false);
-
   if ( m_splashScreen )
   {
     m_splashScreen->close();
@@ -265,11 +263,7 @@ void SpliceStandalone::wrapperLoaded( SpliceGraphWrapper::Ptr wrapper )
     m_splashScreen = NULL;
   }
 
-  m_mainWindow->setGlViewEnabled(true);
   m_mainWindow->initialize();
-  m_mainWindow->resize(1600,1000);
-  m_mainWindow->showMaximized();
-  m_mainWindow->raise();
 }
 
 // this will make sure the main window is created and then raise it

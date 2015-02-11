@@ -77,7 +77,6 @@ namespace FabricSplice
 
     void attributeChanged( QSpliceGraphWrapper wrapper, std::string attributeName );
     void timeChanged(int frame);
-    void setGlViewEnabled(bool enable);
 
     void updateFPS();
 

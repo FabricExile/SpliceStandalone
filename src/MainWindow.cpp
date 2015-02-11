@@ -210,6 +210,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   glParentWidget->setLayout(new QVBoxLayout());
 
 	m_glWidget = new GLWidget(glFormat, glParentWidget);
+  m_glWidget->enableRedraw( false );
   glParentWidget->layout()->addWidget(m_glWidget);
   glParentWidget->layout()->setContentsMargins(0, 0, 0, 0);
   m_glWidget->makeCurrent();
@@ -224,9 +225,13 @@ void MainWindow::initialize()
   showKLEditor();
   showLogWindow();
   bringToFront(m_sourceEditors[0]);
+  resize(1600,1000);
+  showMaximized();
+  raise();
 
   m_glWidget->initialize();
   m_glWidget->show();
+  m_glWidget->enableRedraw( true );
   m_glWidget->updateGL();
 
   m_manipulatorContext = new ManipulationTool(m_glWidget);
@@ -448,9 +453,3 @@ void MainWindow::toggleManipulation()
 		m_manipulatorContext->toolOffCleanup();
 	}
 }
-
-void MainWindow::setGlViewEnabled(bool enable)
-{
-  m_glWidget->enableRedraw(enable);
-}
-
