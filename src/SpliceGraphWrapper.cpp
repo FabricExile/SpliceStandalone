@@ -24,7 +24,7 @@ SpliceGraphWrapper::SpliceGraphWrapper(const std::string & path) :
 
 std::string SpliceGraphWrapper::name()
 {
-#if BOOST_VERSION == 105500
+#if BOOST_VERSION >= 105500
   return boost::filesystem::path(m_path).stem().string();
 #else
   return boost::filesystem::path(m_path).stem();
