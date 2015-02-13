@@ -10,6 +10,7 @@ Import(
   'FABRIC_SPLICE_VERSION',
   'STAGE_DIR',
   'FABRIC_BUILD_OS',
+  'FABRIC_BUILD_DIST',
   'FABRIC_BUILD_TYPE',
   'QT_INCLUDE_DIR',
   'QT_LIB_DIR',
@@ -27,7 +28,9 @@ if FABRIC_BUILD_OS == 'Darwin':
 env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
 if FABRIC_BUILD_OS == 'Linux':
   env.Replace(QT_MOC = '$QT_BINPATH/moc-qt4')
-
+  if FABRIC_BUILD_DIST == 'CentOS':
+    env.Replace(CC = parentEnv['CC'])
+    env.Replace(CXX = parentEnv['CXX'])
 env.Append(CCFLAGS = parentEnv['CCFLAGS'])
 env.Append(LINKFLAGS = parentEnv['LINKFLAGS'])
 env.Append(CPPDEFINES = parentEnv['CPPDEFINES'])

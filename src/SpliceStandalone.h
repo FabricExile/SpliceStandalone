@@ -21,22 +21,21 @@ namespace FabricSplice {
   {
     Q_OBJECT
 
+    friend class SlowOperationCallback;
+
   public:
 
-    SpliceStandalone(int &argc, char **argv, boost::filesystem::path fabricDir, std::string spliceFilePath = "");
+    SpliceStandalone(
+      int &argc, char **argv,
+      boost::filesystem::path fabricDir,
+      std::string const &spliceFilePath = ""
+      );
     virtual ~SpliceStandalone();
 
-    SpliceGraphWrapper::Ptr addWrapper(const std::string & splicePath);
     const std::vector<SpliceGraphWrapper::Ptr> & wrappers();
-
-    // this will make sure the main window is created and then raise it
-    void showMainWindow();
 
     // returns the main window
     MainWindow * getMainWindow();
-
-    // clear all the scripts
-    void clearAll();
 
     // reload all the scripts
     void reloadAll();
@@ -60,6 +59,20 @@ namespace FabricSplice {
 
     static SpliceStandalone * getInstance();
 
+    void emitSlowOperationDescChanged( char const *descCStr );
+
+  public slots:
+
+    // dispatch a message to the log window 
+    void slowOperation( QString desc );
+
+    void fabricClientConstructed();
+    void wrapperLoaded( SpliceGraphWrapper::Ptr wrapper );
+
+  signals:
+
+    void slowOperationDescChanged( QString desc );
+
   private:
 
     void constructFabricClient();
@@ -71,7 +84,52 @@ namespace FabricSplice {
     MainWindow * m_mainWindow;
 
     boost::filesystem::path m_fabricPath;
+    std::string m_spliceFilePath;
     std::vector<SpliceGraphWrapper::Ptr> m_wrappers;
+  };
+
+  class FabricClientConstructor : public QObject
+  {
+    Q_OBJECT
+    
+  public:
+
+    FabricClientConstructor() {}
+
+  public slots:
+
+    void process();
+
+  signals:
+
+    void finished();
+  };
+
+  class WrapperLoader : public QObject
+  {
+    Q_OBJECT
+    
+  public:
+
+    WrapperLoader( std::string const &splicePath, MainWindow *mainWindow )
+      : m_splicePath( splicePath )
+      , m_mainWindow( mainWindow )
+    {
+    }
+
+  public slots:
+
+    void process();
+
+  signals:
+
+    void wrapperLoaded( SpliceGraphWrapper::Ptr );
+    void finished();
+
+  private:
+
+    std::string m_splicePath;
+    MainWindow *m_mainWindow;
   };
 
   // global accessor for all fonts

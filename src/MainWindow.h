@@ -53,20 +53,35 @@ namespace FabricSplice
     MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = Qt::CustomizeWindowHint );
     ~MainWindow() {};
 
+    void initialize();
+
     // make sure the widgetRedraw;
     void redraw();
     void displayMessage(std::string message);
 
+    void makeGLCurrent()
+    {
+      m_glWidget->makeCurrent();
+    }
+
+    void doneGLCurrent()
+    {
+      m_glWidget->doneCurrent();
+    }
+
   public slots:
+    
     void updateViews();
 
     void toggleManipulation();
 
     void attributeChanged( QSpliceGraphWrapper wrapper, std::string attributeName );
     void timeChanged(int frame);
-    void setGlViewEnabled(bool enable);
-    void updateStatusBar(bool force = false);
-    void setStatusBarText(QString caption);
+
+    void updateFPS();
+
+    void setStatusBarText( QString const &caption );
+    void clearStatusBarText( int timeout );
 
     void showKLEditor();
     void showLogWindow();
@@ -96,9 +111,10 @@ namespace FabricSplice
 
     MainWindowKeyFilter * m_eventFilter;
 
-    QStatusBar * m_statusBar;
-    QString m_statusBarCaption;
-    QTime m_statusBarTimer;
+    QStatusBar *m_statusBar;
+
+    QTimer m_fpsTimer;
+    QLabel *m_fpsLabel;
   };
 };
 

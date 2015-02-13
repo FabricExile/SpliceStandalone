@@ -14,10 +14,18 @@ namespace po = boost::program_options;
 
 #include <boost/filesystem.hpp>
 
+#if __linux
+# include <X11/Xlib.h>
+#endif
+
 using namespace FabricSplice;
 
 int main(int argc, char *argv[])
 {
+#if __linux
+  XInitThreads();
+#endif
+
   std::string spliceFilePath;
 
   po::options_description desc("Splice Standalone");
@@ -71,11 +79,7 @@ int main(int argc, char *argv[])
   }
   fclose(f);
 
-	SpliceStandalone app(argc, argv, appDir);
-	app.showMainWindow();
-	app.setupFusionLook();
-  app.processEvents();
-  app.addWrapper(spliceFilePath);
+	SpliceStandalone app(argc, argv, appDir, spliceFilePath);
 
 	// Blocks until application decides to quit.
 	app.exec();

@@ -33,6 +33,12 @@ void appKLReportFunc(const char * message, unsigned int length)
     gApplication->displayMessage(message);
 }
 
+void appSlowOperationFunc(const char *descCStr, unsigned int descLength)
+{
+  if ( gApplication )
+    gApplication->emitSlowOperationDescChanged( descCStr );
+}
+
 void appCompilerErrorFunc(unsigned int row, unsigned int col, const char * file, const char * level, const char * desc)
 {
   printf("%d, %d, %s: %s\n", row, col, file, desc);
@@ -78,32 +84,34 @@ SpliceStandalone * SpliceStandalone::getInstance()
   return gApplication;
 }
 
-SpliceStandalone::SpliceStandalone(int &argc, char **argv, boost::filesystem::path fabricDir, std::string spliceFilePath) 
+SpliceStandalone::SpliceStandalone(
+  int &argc, char **argv,
+  boost::filesystem::path fabricDir,
+  std::string const &spliceFilePath
+  ) 
   : QApplication(argc, argv)
 {
+  qRegisterMetaType<SpliceGraphWrapper::Ptr>("SpliceGraphWrapper::Ptr");
 
   gApplication = this;
 
-  m_mainWindow = NULL;
+  Qt::WindowFlags flags = 0;
+  m_mainWindow = new MainWindow(0,flags);
+
   m_fabricPath = fabricDir;
+  m_spliceFilePath = spliceFilePath;
+
+  connect(this, SIGNAL(slowOperationDescChanged(QString)), this, SLOT(slowOperation(QString)));
 
   QPixmap pixmap((m_fabricPath / "Resources" / "splice_splash.jpg").string().c_str());
-  m_splashScreen = new QSplashScreen(pixmap);
+  m_splashScreen = new QSplashScreen( pixmap );
   m_splashScreen->show();
-  
+
+  setupFusionLook();
+
   Initialize(); 
 
   constructFabricClient();
-
-  Logging::setLogFunc(appLogFunc);
-  Logging::setLogErrorFunc(appLogErrorFunc);
-  Logging::setKLReportFunc(appKLReportFunc);
-
-  Logging::setCompilerErrorFunc(appCompilerErrorFunc);
-  Logging::setKLStatusFunc(appKLStatusFunc);
-
-  if(spliceFilePath.length())
-    addWrapper(spliceFilePath);
 }
 
 SpliceStandalone::~SpliceStandalone()
@@ -122,6 +130,17 @@ void SpliceStandalone::displayMessage(std::string message)
   }
 }
 
+void SpliceStandalone::emitSlowOperationDescChanged( char const *descCStr )
+{
+  emit slowOperationDescChanged( QString( descCStr ) );
+}
+
+void SpliceStandalone::slowOperation( QString desc )
+{
+  if ( m_splashScreen )
+    m_splashScreen->showMessage( desc, Qt::AlignHCenter | Qt::AlignBottom );
+}
+
 // dispatch a message to the status bar
 void SpliceStandalone::setStatusBarText(std::string caption)
 {
@@ -129,49 +148,6 @@ void SpliceStandalone::setStatusBarText(std::string caption)
   {
     m_mainWindow->setStatusBarText(caption.c_str());
   }
-}
-
-
-SpliceGraphWrapper::Ptr SpliceStandalone::addWrapper(const std::string & splicePath)
-{
-  if(m_mainWindow)
-    m_mainWindow->setGlViewEnabled(false);
-
-  if(m_splashScreen)
-  {
-    m_splashScreen->finish(m_mainWindow);
-    m_splashScreen = NULL;
-  }
-
-  QPixmap pixmap((m_fabricPath / "Resources" / "splice_loading.jpg").string().c_str());
-  m_splashScreen = new QSplashScreen(pixmap);
-  m_splashScreen->show();
-
-  SpliceGraphWrapper::Ptr wrapper = SpliceGraphWrapper::Ptr(new SpliceGraphWrapper(splicePath));
-  m_wrappers.push_back(wrapper);
-
-  // setup the evaluation context
-  FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
-  context.setMember("host", FabricSplice::constructStringRTVal("Splice Standalone"));
-  context.setMember("graph", FabricSplice::constructStringRTVal(splicePath.c_str()));
-  context.setMember("currentFilePath", FabricSplice::constructStringRTVal(splicePath.c_str()));
-
-  if(m_mainWindow)
-    m_mainWindow->updateViews();
-
-  if(m_splashScreen)
-  {
-    m_splashScreen->finish(m_mainWindow);
-    m_splashScreen = NULL;
-  }
-
-  if(m_mainWindow)
-  {
-    m_mainWindow->setGlViewEnabled(true);
-    m_mainWindow->redraw();
-  }
-  
-  return wrapper;
 }
 
 const std::vector<SpliceGraphWrapper::Ptr> & SpliceStandalone::wrappers()
@@ -184,50 +160,110 @@ QFont SpliceStandalone::getWidgetFont()
   return QFont("Sans Cherif", 8 );
 }
 
-// this will make sure the main window is created and then raise it
-void SpliceStandalone::showMainWindow()
-{
-  Qt::WindowFlags flags = 0;
-  m_mainWindow = new MainWindow(0,flags);
-
-  m_mainWindow->resize(1600,1000);
-  m_mainWindow->showMaximized();
-  m_mainWindow->raise();
-
-  if(m_splashScreen)
-  {
-    m_splashScreen->finish(m_mainWindow);
-    m_splashScreen = NULL;
-  }
-}
-
 MainWindow * SpliceStandalone::getMainWindow()
 {
   return m_mainWindow;
 }
 
-void SpliceStandalone::constructFabricClient()
+void FabricClientConstructor::process()
 {
   FABRIC_TRY("SpliceStandalone::constructFabricClient",
 
+    Logging::setSlowOperationFunc(appSlowOperationFunc);
+
     FabricCore::Client client = ConstructClient();
+
+    Logging::setLogFunc(appLogFunc);
+    Logging::setLogErrorFunc(appLogErrorFunc);
+    Logging::setKLReportFunc(appKLReportFunc);
+
+    Logging::setCompilerErrorFunc(appCompilerErrorFunc);
+    Logging::setKLStatusFunc(appKLStatusFunc);
 
     client.loadExtension("Animation", "", false);
     client.loadExtension("InlineDrawing", "", false);
     client.loadExtension("Manipulation", "", false);
   );
+
+  emit finished();
 }
 
-// this will make sure the main window is created and then raise it
-void SpliceStandalone::clearAll()
+void WrapperLoader::process()
 {
-  // we also probably need to make sure the inline shape register by those nodes are removed 
-  if(m_wrappers.size() == 0)
-    return;
+  m_mainWindow->makeGLCurrent();
+
+  SpliceGraphWrapper::Ptr wrapper =
+    SpliceGraphWrapper::Ptr( new SpliceGraphWrapper(m_splicePath) );
+
+  // setup the evaluation context
+  FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
+  context.setMember("host",
+    FabricSplice::constructStringRTVal("Splice Standalone"));
+  context.setMember("graph",
+    FabricSplice::constructStringRTVal(m_splicePath.c_str()));
+  context.setMember("currentFilePath",
+    FabricSplice::constructStringRTVal(m_splicePath.c_str()));
   
-  m_wrappers.clear();
-  DestroyClient();
-  constructFabricClient();
+  m_mainWindow->doneGLCurrent();
+
+  emit wrapperLoaded( wrapper );
+  emit finished();
+}
+
+void SpliceStandalone::fabricClientConstructed()
+{
+  if ( m_splashScreen )
+  {
+    m_splashScreen->close();
+    m_splashScreen = NULL;
+  }
+
+  if ( !m_spliceFilePath.empty() )
+  {
+    QPixmap pixmap((m_fabricPath / "Resources" / "splice_loading.jpg").string().c_str());
+    m_splashScreen = new QSplashScreen( pixmap );
+    m_splashScreen->show();
+
+    QThread* thread = new QThread;
+    WrapperLoader* worker =
+      new WrapperLoader( m_spliceFilePath, m_mainWindow );
+    worker->moveToThread(thread);
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(
+      worker, SIGNAL(wrapperLoaded(SpliceGraphWrapper::Ptr)),
+      this, SLOT(wrapperLoaded(SpliceGraphWrapper::Ptr))
+      );
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
+  }
+}
+
+void SpliceStandalone::constructFabricClient()
+{
+  QThread* thread = new QThread;
+  FabricClientConstructor* worker = new FabricClientConstructor();
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), this, SLOT(fabricClientConstructed()));
+  thread->start();
+}
+
+void SpliceStandalone::wrapperLoaded( SpliceGraphWrapper::Ptr wrapper )
+{
+  m_wrappers.push_back( wrapper );
+
+  if(m_splashScreen)
+  {
+    m_splashScreen->close();
+    m_splashScreen = NULL;
+  }
+
+  m_mainWindow->initialize();
 }
 
 // this will make sure the main window is created and then raise it
@@ -270,4 +306,3 @@ void SpliceStandalone::setupFusionLook()
   // qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
 }
-

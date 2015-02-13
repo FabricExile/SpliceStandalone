@@ -124,7 +124,7 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
 /////////////////////////////////////////////////////////////////////////////////
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
-	QMainWindow(parent, flags),
+  QMainWindow(parent, flags),
   m_glWidget( 0 )
 {
   SpliceStandalone* app = SpliceStandalone::getInstance();
@@ -141,8 +141,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   installEventFilter(m_eventFilter);
 
   // status bar
-  m_statusBarTimer.start();
+  m_fpsTimer.setInterval( 1000 );
+  connect( &m_fpsTimer, SIGNAL(timeout()), this, SLOT(updateFPS()) );
+  m_fpsTimer.start();
+
   m_statusBar = new QStatusBar(this);
+  m_fpsLabel = new QLabel( m_statusBar );
+  m_statusBar->addPermanentWidget( m_fpsLabel );
   setStatusBar(m_statusBar);
   m_statusBar->show();
 
@@ -182,11 +187,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   setTabPosition ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::TopDockWidgetArea, QTabWidget::North);
   setDockOptions ( ForceTabbedDocks );
 
-  showAttributeEditor();
-  showKLEditor();
-  showLogWindow();
-  bringToFront(m_sourceEditors[0]);
-
 	QDockWidget * timeSliderDockWidget = new QDockWidget("TimeSlider", this);
 	timeSliderDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
 	timeSliderDockWidget->setFeatures(QDockWidget::DockWidgetClosable);
@@ -208,20 +208,33 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
 
   QWidget * glParentWidget = new QWidget(this);
   glParentWidget->setLayout(new QVBoxLayout());
+
 	m_glWidget = new GLWidget(glFormat, glParentWidget);
+  m_glWidget->enableRedraw( false );
   glParentWidget->layout()->addWidget(m_glWidget);
   glParentWidget->layout()->setContentsMargins(0, 0, 0, 0);
-	m_glWidget->makeCurrent();
+  m_glWidget->makeCurrent();
   m_glWidget->installEventFilter(m_eventFilter);
-	setCentralWidget(glParentWidget);
+  setCentralWidget(glParentWidget);
+  m_glWidget->doneCurrent();
+}
 
-	m_glWidget->show();
+void MainWindow::initialize()
+{
+  showAttributeEditor();
+  showKLEditor();
+  showLogWindow();
+  bringToFront(m_sourceEditors[0]);
+  resize(1600,1000);
+  showMaximized();
+  raise();
 
-  connect( m_glWidget, SIGNAL(redrawn()) , this, SLOT(updateStatusBar()) );
+  m_glWidget->initialize();
+  m_glWidget->show();
+  m_glWidget->enableRedraw( true );
+  m_glWidget->updateGL();
 
-	m_glWidget->updateGL();
-
-	m_manipulatorContext = new ManipulationTool(m_glWidget);
+  m_manipulatorContext = new ManipulationTool(m_glWidget);
 
   m_glWidget->setFocus(Qt::ActiveWindowFocusReason);
 }
@@ -259,27 +272,31 @@ void MainWindow::timeChanged(int frame)
   m_glWidget->setTime(float(frame) / 24.0);
 }
 
-void MainWindow::updateStatusBar(bool force)
+void MainWindow::updateFPS()
 {
-  if(m_statusBarTimer.elapsed() < 1000 && !force)
+  if ( !m_glWidget )
     return;
 
   QString caption;
-  if ( m_glWidget )
-  {
-    caption.setNum(m_glWidget->fps(), 'f', 2);
-    caption += " FPS ";
-  }
-  caption += m_statusBarCaption;
-  m_statusBar->showMessage(caption);
-
-  m_statusBarTimer.start();
+  caption.setNum(m_glWidget->fps(), 'f', 2);
+  caption += " FPS";
+  m_fpsLabel->setText( caption );
 }
 
-void MainWindow::setStatusBarText(QString caption)
+void MainWindow::setStatusBarText(QString const &caption)
 {
-  m_statusBarCaption = caption;
-  updateStatusBar(true);;  
+  m_statusBar->showMessage( caption );
+}
+
+void MainWindow::clearStatusBarText( int afterMS )
+{
+  if ( afterMS > 0 )
+    m_statusBar->showMessage(
+      m_statusBar->currentMessage(),
+      afterMS
+      );
+  else
+    m_statusBar->clearMessage();
 }
 
 void MainWindow::showAttributeEditor()
@@ -437,9 +454,3 @@ void MainWindow::toggleManipulation()
 		m_manipulatorContext->toolOffCleanup();
 	}
 }
-
-void MainWindow::setGlViewEnabled(bool enable)
-{
-  m_glWidget->enableRedraw(enable);
-}
-
