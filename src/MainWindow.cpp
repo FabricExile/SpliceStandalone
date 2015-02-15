@@ -124,8 +124,8 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
 /////////////////////////////////////////////////////////////////////////////////
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
-	QMainWindow(parent, flags)
-
+  QMainWindow(parent, flags),
+  m_glWidget( 0 )
 {
   SpliceStandalone* app = SpliceStandalone::getInstance();
   boost::filesystem::path resourcesDir = app->getFabricPath() / "Resources";
@@ -266,6 +266,8 @@ void MainWindow::timeChanged(int frame)
 
 void MainWindow::updateFPS()
 {
+  if ( !m_glWidget )
+    return;
   QString caption;
   caption.setNum(m_glWidget->fps(), 'f', 2);
   caption += " FPS";
