@@ -65,9 +65,6 @@ if FABRIC_BUILD_OS == 'Darwin':
 else:
   qtFlags['LIBS'] = libs
 
-if FABRIC_BUILD_OS == 'Linux':
-  qtFlags['LIBS'] += ['X11']
-
 if FABRIC_BUILD_OS == 'Windows':
   env.Append(LIBS = ['advapi32', 'shell32', 'user32', 'Opengl32', 'glu32', 'gdi32'])
 if FABRIC_BUILD_OS == 'Linux' or FABRIC_BUILD_OS == 'Darwin':
