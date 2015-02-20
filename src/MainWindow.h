@@ -64,6 +64,11 @@ namespace FabricSplice
       m_glWidget->makeCurrent();
     }
 
+    void doneGLCurrent()
+    {
+      m_glWidget->doneCurrent();
+    }
+
   public slots:
     
     void updateViews();

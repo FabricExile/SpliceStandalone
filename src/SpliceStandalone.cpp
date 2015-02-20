@@ -160,21 +160,6 @@ QFont SpliceStandalone::getWidgetFont()
   return QFont("Sans Cherif", 8 );
 }
 
-// this will make sure the main window is created and then raise it
-void SpliceStandalone::showMainWindow()
-{
-  m_mainWindow->initialize();
-  m_mainWindow->resize(1600,1000);
-  m_mainWindow->showMaximized();
-  m_mainWindow->raise();
-
-  if(m_splashScreen)
-  {
-    m_splashScreen->close();
-    m_splashScreen = NULL;
-  }
-}
-
 MainWindow * SpliceStandalone::getMainWindow()
 {
   return m_mainWindow;
@@ -218,6 +203,8 @@ void WrapperLoader::process()
     FabricSplice::constructStringRTVal(m_splicePath.c_str()));
   context.setMember("currentFilePath",
     FabricSplice::constructStringRTVal(m_splicePath.c_str()));
+  
+  m_mainWindow->doneGLCurrent();
 
   emit wrapperLoaded( wrapper );
   emit finished();
@@ -272,13 +259,17 @@ void SpliceStandalone::wrapperLoaded( SpliceGraphWrapper::Ptr wrapper )
 {
   m_wrappers.push_back( wrapper );
 
-  showMainWindow();
-
-  if(m_mainWindow)
+  if(m_splashScreen)
   {
-    m_mainWindow->setGlViewEnabled(true);
-    m_mainWindow->redraw();
+    m_splashScreen->close();
+    m_splashScreen = NULL;
   }
+
+  m_mainWindow->setGlViewEnabled(true);
+  m_mainWindow->initialize();
+  m_mainWindow->resize(1600,1000);
+  m_mainWindow->showMaximized();
+  m_mainWindow->raise();
 }
 
 // this will make sure the main window is created and then raise it

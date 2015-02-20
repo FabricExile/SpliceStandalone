@@ -34,9 +34,6 @@ namespace FabricSplice {
 
     const std::vector<SpliceGraphWrapper::Ptr> & wrappers();
 
-    // this will make sure the main window is created and then raise it
-    void showMainWindow();
-
     // returns the main window
     MainWindow * getMainWindow();
 

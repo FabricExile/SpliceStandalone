@@ -187,11 +187,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   setTabPosition ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::TopDockWidgetArea, QTabWidget::North);
   setDockOptions ( ForceTabbedDocks );
 
-  showAttributeEditor();
-  showKLEditor();
-  showLogWindow();
-  bringToFront(m_sourceEditors[0]);
-
 	QDockWidget * timeSliderDockWidget = new QDockWidget("TimeSlider", this);
 	timeSliderDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
 	timeSliderDockWidget->setFeatures(QDockWidget::DockWidgetClosable);
@@ -220,18 +215,21 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
   m_glWidget->makeCurrent();
   m_glWidget->installEventFilter(m_eventFilter);
   setCentralWidget(glParentWidget);
+  m_glWidget->doneCurrent();
 }
 
 void MainWindow::initialize()
 {
+  showAttributeEditor();
+  showKLEditor();
+  showLogWindow();
+  bringToFront(m_sourceEditors[0]);
+
   m_glWidget->initialize();
-  m_glWidget->makeCurrent();
+  m_glWidget->show();
+  m_glWidget->updateGL();
 
-	m_glWidget->show();
-
-	m_glWidget->updateGL();
-
-	m_manipulatorContext = new ManipulationTool(m_glWidget);
+  m_manipulatorContext = new ManipulationTool(m_glWidget);
 
   m_glWidget->setFocus(Qt::ActiveWindowFocusReason);
 }
