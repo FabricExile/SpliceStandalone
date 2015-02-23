@@ -14,7 +14,7 @@ Import(
   'FABRIC_BUILD_TYPE',
   'QT_INCLUDE_DIR',
   'QT_LIB_DIR',
-  'QT_BINPATH',
+  'QT_BIN_DIR',
   'sharedCapiFlags',
   'spliceFlags'
   )
@@ -28,11 +28,10 @@ if FABRIC_BUILD_OS == 'Darwin':
 # create the build environment
 env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
 
-if QT_BINPATH:
-  env.Replace(QT_BINPATH=QT_BINPATH)
+env.Replace(QT_BINPATH=QT_BIN_DIR)
 
 if FABRIC_BUILD_OS == 'Linux':
-  env.Replace(QT_MOC = '$QT_BINPATH/moc-qt4')
+  env.Replace(QT_MOC = '$QT_BIN_DIR/moc-qt4')
   if FABRIC_BUILD_DIST == 'CentOS':
     env.Replace(CC = parentEnv['CC'])
     env.Replace(CXX = parentEnv['CXX'])

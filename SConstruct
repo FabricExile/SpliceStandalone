@@ -72,7 +72,7 @@ else:
     'BOOST_DIR': os.environ['BOOST_DIR'],
     'QT_INCLUDE_DIR': os.environ['QT_INCLUDE_DIR'],
     'QT_LIB_DIR': os.environ['QT_LIB_DIR'],
-    'QT_BINPATH': os.environ.get('QT_BINPATH', None)
+    'QT_BIN_DIR': os.environ['QT_BIN_DIR'],
   },
   variant_dir = spliceEnv.Dir('.build')
 )

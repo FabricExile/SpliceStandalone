@@ -46,8 +46,8 @@ To inform scons where to find the Fabric Core includes as well as the thirdparty
 * FABRIC_DIR: Should point to Fabric Engine's Core folder.
 * BOOST_DIR: Should point to the boost root folder (containing boost/ (includes) and lib/ for the static libraries).
 * QT_INCLUDE_DIR: The include folder of the Qt installation.
-* QT_LIB_DIR: The library folder of the Qt installation.
-* QT_BINPATH: Optional directory to the bin folder of the Qt installation. 
+* QT_LIB_DIR: The lib folder of the Qt installation.
+* QT_BIN_DIR: The bin folder of the Qt installation. 
 
 The temporary files will be built into the *.build* folder, while the structured output files will be placed in the *.stage* folder.
 
