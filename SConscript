@@ -26,7 +26,7 @@ if FABRIC_BUILD_OS == 'Darwin':
   qtDir = '/usr/local'
 
 # create the build environment
-env = Environment(MSVC_VERSION='10.0', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
+env = Environment(MSVC_VERSION='10.0', TARGET_ARCH='x86_64', tools=['default','qt'], QTDIR=qtDir, QT_LIB='', ENV=parentEnv['ENV'])
 
 env.Replace(QT_BINPATH=QT_BIN_DIR)
 
