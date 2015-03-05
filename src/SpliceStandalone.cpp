@@ -225,6 +225,7 @@ void SpliceStandalone::fabricClientConstructed()
     m_splashScreen->show();
 
     QThread* thread = new QThread;
+    thread->setStackSize( 64 * 1024 * 1024 );
     WrapperLoader* worker =
       new WrapperLoader( m_spliceFilePath, m_mainWindow );
     worker->moveToThread(thread);
@@ -243,6 +244,7 @@ void SpliceStandalone::fabricClientConstructed()
 void SpliceStandalone::constructFabricClient()
 {
   QThread* thread = new QThread;
+  thread->setStackSize( 64 * 1024 * 1024 );
   FabricClientConstructor* worker = new FabricClientConstructor();
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
