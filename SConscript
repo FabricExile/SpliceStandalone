@@ -74,7 +74,9 @@ if FABRIC_BUILD_OS == 'Windows':
 if FABRIC_BUILD_OS == 'Linux' or FABRIC_BUILD_OS == 'Darwin':
   env.Append(LIBS = ['boost_program_options'])
 if FABRIC_BUILD_OS == 'Linux':
-  env.Append(LIBS = ['pthread', 'X11'])
+  env.Append(LIBS = ['pthread'])
+  if FABRIC_BUILD_DIST != 'CentOS':
+    env.Append(LIBS = ['X11'])
 
 env.MergeFlags(qtFlags)
 env.MergeFlags(sharedCapiFlags)
