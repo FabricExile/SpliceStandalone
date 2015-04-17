@@ -48,6 +48,7 @@ if os.path.exists(spliceApiDir.abspath):
       'STAGE_DIR': spliceEnv.Dir('.build').Dir('SpliceAPI').Dir('.stage'),
       'BOOST_DIR': os.environ['BOOST_DIR']
     },
+    duplicate=0,
     variant_dir = spliceEnv.Dir('.build').Dir('SpliceAPI')
   )
   
@@ -74,6 +75,7 @@ else:
     'QT_LIB_DIR': os.environ['QT_LIB_DIR'],
     'QT_BIN_DIR': os.environ['QT_BIN_DIR'],
   },
+  duplicate=0,
   variant_dir = spliceEnv.Dir('.build')
 )
 
