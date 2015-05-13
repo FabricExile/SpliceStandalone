@@ -16,7 +16,8 @@ Import(
   'QT_LIB_DIR',
   'QT_BIN_DIR',
   'sharedCapiFlags',
-  'spliceFlags'
+  'spliceFlags',
+  'qtInstalledLibs'
   )
 
 qtDir = os.path.split(QT_INCLUDE_DIR)[0]
@@ -143,10 +144,12 @@ for sampleFile in glob.glob(os.path.join(env.Dir('samples').srcnode().abspath, '
   else:
     standaloneFiles.append(env.Install(samplesDir.Dir(baseName), env.Glob('samples/%s/*' % baseName)))
 
-if FABRIC_BUILD_OS == 'Windows':
-  qtBinDir = os.path.join(os.path.split(QT_LIB_DIR)[0], 'bin')
-  for qtLib in qtFlags['LIBS']:
-    standaloneFiles.append(env.Install(binDir, env.Glob(os.path.join(qtBinDir, '*%s*.dll' % qtLib))))
+# if FABRIC_BUILD_OS == 'Windows':
+#   qtBinDir = os.path.join(os.path.split(QT_LIB_DIR)[0], 'bin')
+#   qtLibDir = os.path.join(os.path.split(QT_LIB_DIR)[0], 'lib')
+#   for qtLib in qtFlags['LIBS']:
+#     standaloneFiles.append(env.Install(binDir, env.Glob(os.path.join(qtBinDir, '*%s*.dll' % qtLib))))
+#     standaloneFiles.append(env.Install(binDir, env.Glob(os.path.join(qtLibDir, '*%s*.pbd' % qtLib))))
 
 standaloneFiles.append(
   env.Install(
@@ -155,6 +158,8 @@ standaloneFiles.append(
     Glob(os.path.join('images', '*.png'))
     )
   )
+
+env.Depends(standaloneFiles, qtInstalledLibs)
 
 # [pzion 20141001] WTF???
 # # install PDB files on windows
