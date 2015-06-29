@@ -33,7 +33,7 @@ bool ManipulationCmd::redoIt()
 {
   if(m_rtval_commands.isValid())
   {
-    for(int i=0; i<m_rtval_commands.getArraySize(); i++)
+    for(uint32_t i=0; i<m_rtval_commands.getArraySize(); i++)
     {
       m_rtval_commands.getArrayElement(i).callMethod("", "doAction", 0, 0);
     }
@@ -45,7 +45,7 @@ bool ManipulationCmd::undoIt()
 {
   if(m_rtval_commands.isValid())
   {
-    for(int i=0; i<m_rtval_commands.getArraySize(); i++)
+    for(uint32_t i=0; i<m_rtval_commands.getArraySize(); i++)
     {
       m_rtval_commands.getArrayElement(i).callMethod("", "undoAction", 0, 0);
     }
@@ -65,10 +65,8 @@ class EventFilterObject : public QObject
 
 static EventFilterObject sEventFilterObject;
 
-const char helpString[] = "Click and drag to interact with Fabric:Splice.";
-
 ManipulationTool::ManipulationTool(GLWidget * glView) 
-  : mView(glView) , m_active(false)
+  : m_active(false), mView(glView)
 {
 
 }

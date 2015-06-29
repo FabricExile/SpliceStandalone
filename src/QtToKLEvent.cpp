@@ -80,8 +80,6 @@ FabricCore::RTVal QtToKLEvent(QEvent *event, FabricCore::RTVal viewport)
   {
     int eventType = int(event->type());
 
-    bool result = false;
-
     // FABRIC_TRY_RETURN("ManipulationTool::onEvent", false,
       klevent.setMember("eventType", constructUInt32RTVal(eventType));
 

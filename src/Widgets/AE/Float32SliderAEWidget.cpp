@@ -98,7 +98,7 @@ void Float32SliderAEWidget::setValueArray(FabricCore::RTVal values)
       for (unsigned int i = 0; i < rtValGetArraySize(values); ++i)
       {
         m_sliders[i] = new QSlider(m_listWidget);
-        m_sliders[i]->setRange(bottom * 1000.0f, top * 1000.0f);
+        m_sliders[i]->setRange(int(bottom * 1000), int(top * 1000));
         m_sliders[i]->setOrientation(Qt::Horizontal);
 
         m_widgets[i] = new ItemWidget(m_listWidget);
@@ -169,7 +169,7 @@ void Float32SliderAEWidget::textChanged(const QString & text)
       continue;
 
     float value = m_widgets[i]->text().toFloat();
-    m_sliders[i]->setValue(value * 1000.0);
+    m_sliders[i]->setValue(int(value * 1000));
     break;
   }
 
