@@ -215,16 +215,6 @@ void GLWidget::setWireFrame(bool wireFrame)
   updateGL();
 }
 
-void GLWidget::toggleGrid()
-{
-  FABRIC_TRY("GLWidget::toggleGrid",
-
-    m_viewport.callMethod("", "toggleGrid", 0, 0);
-
-  );
-  updateGL();
-}
-
 /*************************************************************************/
 /* QGLWidget calls                                                       */
 /*************************************************************************/

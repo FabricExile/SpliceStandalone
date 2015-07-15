@@ -65,11 +65,6 @@ bool MainWindowKeyFilter::eventFilter(QObject* object, QEvent* event)
           }
         }
       }
-      case Qt::Key_G:
-      {
-        m_window->m_glWidget->toggleGrid();
-        return true;
-      }
       case Qt::Key_Q:
       {
         m_window->toggleManipulation();

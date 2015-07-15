@@ -36,7 +36,6 @@ namespace FabricSplice
     bool isRedrawEnabled() { return m_redrawEnabled; }
     void setTime(float time);
     void setWireFrame(bool wireFrame);
-    void toggleGrid();
     void toggleGLFullScreen(int screenIndex = -1);
     bool isGLFullScreen() { return m_fullScreenDialog != NULL; }
     
