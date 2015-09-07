@@ -69,7 +69,7 @@ else:
     'FABRIC_BUILD_OS': os.environ['FABRIC_BUILD_OS'],
     'FABRIC_BUILD_ARCH': os.environ['FABRIC_BUILD_ARCH'],
     'FABRIC_BUILD_DIST': os.environ['FABRIC_BUILD_DIST'],
-    'STAGE_DIR': spliceEnv.Dir('.stage').Dir('SpliceIntegrations').Dir('SpliceStandalone'+os.environ['FABRIC_SPLICE_VERSION']),
+    'STAGE_DIR': spliceEnv.Dir('.stage').Dir('DCCIntegrations').Dir('SpliceStandalone'+os.environ['FABRIC_SPLICE_VERSION']),
     'BOOST_DIR': os.environ['BOOST_DIR'],
     'QT_INCLUDE_DIR': os.environ['QT_INCLUDE_DIR'],
     'QT_LIB_DIR': os.environ['QT_LIB_DIR'],
