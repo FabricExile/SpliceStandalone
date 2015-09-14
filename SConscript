@@ -153,8 +153,7 @@ for sampleFile in glob.glob(os.path.join(env.Dir('samples').srcnode().abspath, '
 standaloneFiles.append(
   env.Install(
     STAGE_DIR.Dir('Resources'),
-    Glob(os.path.join('images', '*.jpg')) + 
-    Glob(os.path.join('images', '*.png'))
+    Glob(os.path.join('images', '*.jpg'))
     )
   )
 
