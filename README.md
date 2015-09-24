@@ -22,6 +22,7 @@ A scons (http://www.scons.org/) build script is provided. Fabric Splice Standalo
 * A build of Qt 4.8+ (for Windows (http://www.alphapixel.com/content/download-qt-binaries-free), system libs on linux / osx)
 * A dynamic build of Fabric Core (matching the latest version).
 * The SpliceAPI repository checked out one level above (http://github.com/fabric-engine/SpliceAPI)
+* The FTL (Fabric Template Library) repository (it can be pulled here: https://github.com/fabric-engine/FTL).
 
 Fabric Splice Standalone requires a certain folder structure to build properly. You will need to have the SpliceAPI cloned as well on your drive, as such:
 
