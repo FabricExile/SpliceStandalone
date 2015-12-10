@@ -119,6 +119,7 @@ TimeSliderWidget::TimeSliderWidget(QWidget * parent)
   m_frameRateComboBox->addItem("max fps");
   m_frameRateComboBox->addItem("12 fps");
   m_frameRateComboBox->addItem("24 fps");
+  m_frameRateComboBox->addItem("25 fps");
   m_frameRateComboBox->addItem("48 fps");
   m_frameRateComboBox->addItem("60 fps");
   layout()->addWidget(m_frameRateComboBox);
@@ -319,9 +320,11 @@ void TimeSliderWidget::frameRateChanged(int index)
 		m_timer->setInterval(83); // 12 fps
 	else if (index == 2)
 		m_timer->setInterval(42); // 24 fps
-  else if ( index == 3 )
-    m_timer->setInterval(21); // 48 fps
+	else if (index == 3)
+		m_timer->setInterval(40); // 25 fps  
   else if ( index == 4 )
+    m_timer->setInterval(21); // 48 fps
+  else if ( index == 5 )
     m_timer->setInterval(17); // 60 fps
 	
 }
