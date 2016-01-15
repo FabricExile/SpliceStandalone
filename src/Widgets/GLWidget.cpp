@@ -13,7 +13,7 @@
 #include <streambuf>
 #include <memory>
 
-#include <QtGui/qapplication.h>
+#include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QLayout>
 #include <QtGui/QVBoxLayout>
