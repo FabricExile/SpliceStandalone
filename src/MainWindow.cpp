@@ -1,7 +1,7 @@
-#include <QtGui/QtGui>
-#include <QtGui/QColor>
-#include <QtGui/QRgb>
-#include <QtGui/QIcon>
+#include <QtGui>
+#include <QColor>
+#include <QRgb>
+#include <QIcon>
 
 #include <FabricSplice.h>
 

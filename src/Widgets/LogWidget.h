@@ -1,8 +1,8 @@
 #ifndef __LOGWIDGET_H__
 #define __LOGWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QTextEdit>
+#include <QWidget>
+#include <QTextEdit>
 
 namespace FabricSplice
 {

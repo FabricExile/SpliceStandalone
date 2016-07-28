@@ -1,14 +1,14 @@
 #ifndef __FLOAT32AEWIDGET_H__
 #define __FLOAT32AEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLineEdit>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QLineEdit>
 
 #include "DoubleValidator.h"
 #include "AEWidget.h"

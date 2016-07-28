@@ -1,17 +1,17 @@
 #ifndef __FLOAT32SLIDERAEWIDGET_H__
 #define __FLOAT32SLIDERAEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSlider>
-#include <QtGui/QLineEdit>
+#include <QScrollArea>
+#include <QGridLayout>
+#include <QSlider>
+#include <QLineEdit>
 
 #include "DoubleValidator.h"
 #include "AEWidget.h"

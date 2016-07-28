@@ -1,15 +1,15 @@
 #ifndef __SINT32AEWIDGET_H__
 #define __SINT32AEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QIntValidator>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QIntValidator>
 
 #include "AEWidget.h"
 #include "macros.h"

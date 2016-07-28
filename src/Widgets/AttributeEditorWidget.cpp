@@ -2,17 +2,17 @@
 #include "AE/AEWidgetFactory.h"
 #include "AE/AEWidget.h"
 
-#include <QtGui/QPushButton>
-#include <QtGui/QHBoxLayout>
+#include <QPushButton>
+#include <QHBoxLayout>
 
-#include <QtCore/QTimer>
-#include <QtGui/QPainter>
-#include <QtGui/QMenu>
-#include <QtGui/QScrollBar>
-#include <QtGui/QFrame>
-#include <QtGui/QDialog>		
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
+#include <QTimer>
+#include <QPainter>
+#include <QMenu>
+#include <QScrollBar>
+#include <QFrame>
+#include <QDialog>		
+#include <QPushButton>
+#include <QLineEdit>
 
 #include "macros.h"
 

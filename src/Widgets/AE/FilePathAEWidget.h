@@ -1,15 +1,15 @@
 #ifndef __FILEPATHAEWIDGET_H__
 #define __FILEPATHAEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
+#include <QScrollArea>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include "AEWidget.h"
 

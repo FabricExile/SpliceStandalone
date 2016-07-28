@@ -1,16 +1,16 @@
 #ifndef __STRINGAEWIDGET_H__
 #define __STRINGAEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLineEdit>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QLineEdit>
 
 #include "DoubleValidator.h"
 #include "AEWidget.h"

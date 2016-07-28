@@ -1,12 +1,12 @@
 #include <fstream>
 #include <string>
 
-#include <QtGui/QLabel>
-#include <QtGui/QFileDialog>
-#include <QtGui/QShortcut>
-#include <QtGui/QKeySequence>
+#include <QLabel>
+#include <QFileDialog>
+#include <QShortcut>
+#include <QKeySequence>
 
-#include <QtCore/QDir>
+#include <QDir>
 
 #include "KLEditor.h"
 #include "SpliceStandalone.h"

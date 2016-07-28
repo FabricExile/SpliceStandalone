@@ -2,13 +2,13 @@
 #ifndef __KLSOURCECODEWIDGET_H__
 #define __KLSOURCECODEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QPlainTextEdit>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QFont>
-#include <QtGui/QFontMetrics>
-#include <QtGui/QMenu>
+#include <QWidget>
+#include <QPlainTextEdit>
+#include <QKeyEvent>
+#include <QPaintEvent>
+#include <QFont>
+#include <QFontMetrics>
+#include <QMenu>
 
 #include "KLSyntaxHighlighter.h"
 #include <FabricSplice.h>

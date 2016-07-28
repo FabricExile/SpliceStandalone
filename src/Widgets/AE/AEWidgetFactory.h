@@ -1,14 +1,14 @@
 #ifndef __AEWIDGETFACTORY_H__
 #define __AEWIDGETFACTORY_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 
 #include <boost/unordered_map.hpp>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 #include <FabricCore.h>
 #include <FabricSplice.h>

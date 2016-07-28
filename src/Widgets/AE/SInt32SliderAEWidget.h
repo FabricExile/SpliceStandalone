@@ -1,16 +1,16 @@
 #ifndef __SINT32SLIDERAEWIDGET_H__
 #define __SINT32SLIDERAEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSlider>
-#include <QtGui/QLineEdit>
-#include <QtGui/QIntValidator>
+#include <QScrollArea>
+#include <QGridLayout>
+#include <QSlider>
+#include <QLineEdit>
+#include <QIntValidator>
 
 #include "AEWidget.h"
 

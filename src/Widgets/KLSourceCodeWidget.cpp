@@ -1,9 +1,9 @@
-#include <QtGui/QFont>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QPainter>
-#include <QtGui/QApplication>
-#include <QtGui/QScrollBar>
-#include <QtGui/QToolTip>
+#include <QFont>
+#include <QVBoxLayout>
+#include <QPainter>
+#include <QApplication>
+#include <QScrollBar>
+#include <QToolTip>
 
 #include "KLSourceCodeWidget.h"
 

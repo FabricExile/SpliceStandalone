@@ -1,11 +1,11 @@
 #ifndef __KLEDITOR_H__
 #define __KLEDITOR_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QTabWidget>
+#include <QWidget>
+#include <QBoxLayout>
+#include <QPushButton>
+#include <QGroupBox>
+#include <QTabWidget>
 
 #include "SpliceGraphWrapper.h"
 #include "KLSourceCodeWidget.h"

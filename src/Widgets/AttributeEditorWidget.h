@@ -1,14 +1,14 @@
 #ifndef __ATTRIBUTEEDITOREWIDGET_H__
 #define __ATTRIBUTEEDITOREWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 
 #include <map>
 #include <set>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QPushButton>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 #include <boost/shared_ptr.hpp>
 #include <FabricCore.h>

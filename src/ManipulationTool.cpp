@@ -1,8 +1,8 @@
-#include <QtGui/QApplication>
-#include <QtGui/QWidget>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QWheelEvent>
+#include <QApplication>
+#include <QWidget>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QWheelEvent>
 
 #include "ManipulationTool.h"
 #include "QtToKLEvent.h"

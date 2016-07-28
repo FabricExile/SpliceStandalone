@@ -1,12 +1,12 @@
 #include "AEWidget.h"
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPainter>
-#include <QtGui/QMenu>
-#include <QtGui/QScrollBar>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
+#include <QHBoxLayout>
+#include <QPainter>
+#include <QMenu>
+#include <QScrollBar>
+#include <QDialog>
+#include <QPushButton>
+#include <QLabel>
 
 #include "macros.h"
 #include "SpliceStandalone.h"

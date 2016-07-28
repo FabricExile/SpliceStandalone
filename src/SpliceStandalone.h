@@ -1,11 +1,11 @@
 #ifndef __SPLICESTANDALONE_H__
 #define __SPLICESTANDALONE_H__
 
-#include <QtGui/QtGui>
-#include <QtGui/QApplication>
-#include <QtGui/QWindowsStyle>
-#include <QtGui/QFont>
-#include <QtGui/QSplashScreen>
+#include <QtGui>
+#include <QApplication>
+#include <QWindowsStyle>
+#include <QFont>
+#include <QSplashScreen>
 #include <vector>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>

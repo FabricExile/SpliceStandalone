@@ -1,8 +1,8 @@
 #include "TimeSliderWidget.h"
 
-#include <QtGui/QMenu>
-#include <QtGui/QColorDialog>
-#include <QtGui/QInputDialog>
+#include <QMenu>
+#include <QColorDialog>
+#include <QInputDialog>
 
 #include <boost/assign/list_of.hpp>
 #include <boost/format.hpp>

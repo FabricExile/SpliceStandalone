@@ -1,17 +1,17 @@
 #include "FilePathAEWidget.h"
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPainter>
-#include <QtGui/QMenu>
-#include <QtGui/QScrollBar>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QListWidget>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QSizePolicy>
-#include <QtGui/QFileDialog>
+#include <QHBoxLayout>
+#include <QPainter>
+#include <QMenu>
+#include <QScrollBar>
+#include <QDialog>
+#include <QPushButton>
+#include <QLabel>
+#include <QSpinBox>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QSizePolicy>
+#include <QFileDialog>
 
 #include <boost/version.hpp>
 

@@ -1,12 +1,12 @@
 #ifndef __AEWIDGET_H__
 #define __AEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
-#include <QtGui/QLabel>
+#include <QWidget>
+#include <QContextMenuEvent>
+#include <QLabel>
 
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
+#include <QScrollArea>
+#include <QVBoxLayout>
 #include <iostream>
 
 #include <FabricCore.h>

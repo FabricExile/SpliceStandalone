@@ -1,18 +1,18 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
-#include <QtGui/QtGui>
-#include <QtGui/QMainWindow>
-#include <QtGui/QDialog>
-#include <QtGui/QColorDialog>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QToolButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QTableWidget>
-#include <QtGui/QSlider>
-#include <QtGui/QGroupBox>
-#include <QtCore/QTime>
+#include <QtGui>
+#include <QMainWindow>
+#include <QDialog>
+#include <QColorDialog>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+#include <QToolButton>
+#include <QCheckBox>
+#include <QTableWidget>
+#include <QSlider>
+#include <QGroupBox>
+#include <QTime>
 #include "SpliceGraphWrapper.h"
 
 #include "Widgets/LogWidget.h"

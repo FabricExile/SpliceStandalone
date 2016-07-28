@@ -1,7 +1,7 @@
 #ifndef __AEITEM_H__
 #define __AEITEM_H__
 
-#include <QtCore/QVariant>
+#include <QVariant>
 #include <FabricCore.h>
 #include <FabricSplice.h>
 

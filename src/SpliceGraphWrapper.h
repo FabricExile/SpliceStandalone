@@ -13,7 +13,7 @@
 
 #include <FabricSplice.h>
 #include <FabricCore.h>
-#include <QtCore/QMetaType>
+#include <QMetaType>
 
 namespace FabricSplice
 {

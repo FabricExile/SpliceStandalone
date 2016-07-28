@@ -1,7 +1,7 @@
 #ifndef __DOUBLEVALIDATOR_H__
 #define __DOUBLEVALIDATOR_H__
 
-#include <QtGui/QDoubleValidator>
+#include <QDoubleValidator>
 
 namespace FabricSplice
 {

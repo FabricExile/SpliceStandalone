@@ -13,10 +13,10 @@
 #include <streambuf>
 #include <memory>
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QLayout>
-#include <QtGui/QVBoxLayout>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QLayout>
+#include <QVBoxLayout>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 

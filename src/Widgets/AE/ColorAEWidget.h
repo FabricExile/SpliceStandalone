@@ -1,14 +1,14 @@
 #ifndef __COLORAEWIDGET_H__
 #define __COLORAEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QCheckBox>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QCheckBox>
 
 #include "AEWidget.h"
 

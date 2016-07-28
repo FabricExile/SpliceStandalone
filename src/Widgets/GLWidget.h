@@ -3,13 +3,13 @@
 
 // #include <GL/glew.h>
 
-#include <QtCore/QtCore>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QMainWindow>
-#include <QtGui/QImage>
-#include <QtGui/QDialog>
-#include <QtOpenGL/QGLWidget>
-#include <QtCore/QTime>
+#include <QtCore>
+#include <QMouseEvent>
+#include <QMainWindow>
+#include <QImage>
+#include <QDialog>
+#include <QGLWidget>
+#include <QTime>
 
 #include <FabricSplice.h>
 #include <FabricCore.h>

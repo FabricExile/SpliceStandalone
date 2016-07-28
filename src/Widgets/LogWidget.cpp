@@ -1,7 +1,7 @@
 #include <fstream>
 #include <string>
 
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 #include "LogWidget.h"
 

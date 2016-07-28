@@ -1,15 +1,15 @@
 #ifndef __VEC2AEWIDGET_H__
 #define __VEC2AEWIDGET_H__
 
-#include <QtGui/QWidget>
-#include <QtGui/QContextMenuEvent>
+#include <QWidget>
+#include <QContextMenuEvent>
 #include <map>
 #include <set>
 #include <vector>
-#include <QtGui/QScrollArea>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QDoubleValidator>
+#include <QScrollArea>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QDoubleValidator>
 
 #include "AEWidget.h"
 
