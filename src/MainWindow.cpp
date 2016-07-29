@@ -250,9 +250,6 @@ void MainWindow::attributeChanged( QSpliceGraphWrapper wrapper, std::string attr
     // perform an evaluation
     wrapperPtr->evaluate(true);
     redraw();
-
-    context.callMethod("", "_clear", 0, 0);
-
   );
 }
 
