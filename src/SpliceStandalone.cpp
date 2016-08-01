@@ -197,7 +197,9 @@ void WrapperLoader::process()
 
   // setup the evaluation context
   FabricCore::RTVal context = wrapper->getGraph().getEvalContext();
-  
+  context.setMember(
+    "host", FabricSplice::constructStringRTVal( "Splice Standalone" ) );
+
   m_mainWindow->doneGLCurrent();
 
   emit wrapperLoaded( wrapper );
