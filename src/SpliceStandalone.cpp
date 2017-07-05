@@ -180,7 +180,7 @@ void FabricClientConstructor::process()
     Logging::setCompilerErrorFunc(appCompilerErrorFunc);
     Logging::setKLStatusFunc(appKLStatusFunc);
 
-    client.loadExtension("Animation", "", false);
+    client.loadExtension("AnimX", "", false);
     client.loadExtension("InlineDrawing", "", false);
     client.loadExtension("Manipulation", "", false);
   );
